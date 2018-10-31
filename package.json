@@ -1,0 +1,31 @@
+{
+  "name": "givskud-zoo-project",
+  "version": "1.0.0",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "",
+    "gulp-babel": "^7.0.0",
+    "babel-core": "",
+    "babel-preset-env": "",
+    "gulp-util": "",
+    "gulp-uglify": "",
+    "gulp-concat": "",
+    "gulp-autoprefixer": "",
+    "gulp-sass": "",
+    "gulp-sourcemaps": ""
+  },
+  "devDependencies": {
+    "gulp-autoprefixer": "^6.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-sass": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-uglify": "^3.0.1",
+    "gulp-util": "^3.0.8"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jiri Kralovec <jiri0042@edu.eal.dk>",
+  "license": "ISC",
+  "description": "Givskud Zoo Project"
+}

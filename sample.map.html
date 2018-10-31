@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Map sample</title>
+    <style type="text/css">
+        .controller {
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 999;
+        }
+
+        .controller--zoom-out {
+            top: 20px;
+        }
+
+        #map-element,
+        #map-element-portrait {
+            position: relative;
+            float: left;
+            width: 500px;
+            border: 1px solid black;
+            overflow: hidden;
+
+            width: 85%;
+            height: 500px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body style="height: 2500px;">
+    <div id="map-element"></div>
+    <script src="dest/application.js"></script>
+    <script type="text/javascript">
+        var DemoMapConfig = {
+            "Map": "assets/map.test.svg",
+            "UsesRealWorld": true,
+            "Longitude": {
+                "Start": 8.07207151,
+                "End": 15.15781381
+            },
+            "Latitude": {
+                "Start": 57.75191059,
+                "End": 54.55877948
+            }
+        }
+        var Config = {
+            Position: {
+                x: 10,
+                y: 10
+            },
+            Zoom: 1
+        }
+        var MarkersData = Array({
+            group: {
+                id: 0,
+                slug: 'cities',
+                label: 'Cities',
+                icon: null
+            },
+            id: 1226,
+            label: 'Copenhagen',
+            description: 'Description',
+            position: {
+                x: 12.5683372,
+                y: 55.6760968
+            }
+        }, {
+            group: {
+                id: 0,
+                slug: 'cities',
+                label: 'Cities',
+                icon: null
+            },
+            id: 4551,
+            label: 'Odense',
+            description: 'Description',
+            position: {
+                x: 10.40237,
+                y: 55.403756
+            }
+        });
+
+        var Map = new InteractiveMap(document.getElementById('map-element'), DemoMapConfig, Config);
+        Map.AddMarkers(MarkersData);
+    </script>
+</body>
+
+</html>
