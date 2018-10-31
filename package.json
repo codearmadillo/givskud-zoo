@@ -27,5 +27,13 @@
   },
   "author": "Jiri Kralovec <jiri0042@edu.eal.dk>",
   "license": "ISC",
-  "description": "Givskud Zoo Project"
+  "description": "Givskud Zoo Project",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jiri-kralovec-eal/givskud-zoo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jiri-kralovec-eal/givskud-zoo/issues"
+  },
+  "homepage": "https://github.com/jiri-kralovec-eal/givskud-zoo#readme"
 }

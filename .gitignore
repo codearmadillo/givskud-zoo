@@ -1,3 +1,5 @@
 /node_modules/
 /dest/
 /production/
+package-lock.json
+package.json
