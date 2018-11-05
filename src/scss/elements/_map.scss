@@ -1,0 +1,67 @@
+.iamap {
+    &-filterwrapper {
+        position: absolute;
+        width: 75%; height: 100%;
+        top: 0; left: 0;
+        z-index: 101; padding: 19px;
+        background-color: #323232; color: #fff;
+        overflow: hidden;
+        box-sizing: border-box;
+    
+        @media only screen and (min-width: 450px) {
+            width: 50%;
+        }
+
+        label {
+            cursor: pointer;
+            position: relative;
+            display: block;
+            float: left;
+            width: 100%;
+            line-height: 30px;
+
+            input {
+                display: none;
+            }
+            &::before,
+            &::after {
+                content: '';
+                display: inline-block;
+                box-sizing: border-box;
+                transition: 300ms;
+            }
+            &::after {
+                position: absolute;
+                width: 42px; height: 20px;
+                border-radius: 10px;
+                border: 2px solid #FF1924;
+                top: 5px; right: 0;
+            }
+            &::before {
+                position: absolute;
+                width: 14px; height: 14px;
+                border-radius: 50%;
+                background-color: #FF1924;
+                right: 25px; top: 8px;
+            }
+        }
+        label.active {
+            &::after {
+                border-color: #85BF00;
+            }
+            &::before {
+                right: 3px;
+                background-color: #85BF00;
+            }
+        }
+
+        .close {
+            display: block; position: absolute;
+            width: 16px;
+            height: 16px;
+            right: 0;
+            top: 0;
+            background: red;
+        }
+    }
+}

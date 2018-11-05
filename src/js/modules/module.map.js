@@ -56,16 +56,7 @@ class InteractiveMap {
                 )
             }
             this.Map.Step = 1;
-            this.Map.StepSize = {
-                hor: {
-                    coords: this.Map.Area.Longitude / (this.Map.Distances.hor / this.Map.Step),
-                    px: null
-                },
-                ver: {
-                    coords: this.Map.Area.Latitude / (this.Map.Distances.ver / this.Map.Step),
-                    px: null
-                }
-            }
+            this.CalculateDistances();
         }
         
         this.Elements = {
@@ -89,6 +80,8 @@ class InteractiveMap {
     Load() {
         var self = this;
 
+        this.Elements.Parent.className = 'iamap';
+
         this.Elements.Loader = this.Loader();
         this.Elements.Parent.appendChild(this.Elements.Loader);
 
@@ -105,6 +98,7 @@ class InteractiveMap {
                 self.Render();
 
                 window.addEventListener('resize', function(e){
+                    self.CalculateDistances();
                     self.Render();
                 });
             });
@@ -248,9 +242,19 @@ class InteractiveMap {
             }
         }
 
-        console.log('H ', this.Pan.Horizontal.isEnabled, 'V ', this.Pan.Vertical.isEnabled);
-
         return true;
+    }
+    CalculateDistances() {
+        this.Map.StepSize = {
+            hor: {
+                coords: this.Map.Area.Longitude / (this.Map.Distances.hor / this.Map.Step),
+                px: null
+            },
+            ver: {
+                coords: this.Map.Area.Latitude / (this.Map.Distances.ver / this.Map.Step),
+                px: null
+            }
+        }
     }
     CreateControllers() {
         var self = this;
@@ -309,9 +313,6 @@ class InteractiveMap {
 
             self.Pan.touchDrag = true;
 
-            self.Pan.Element.XStart = self.Elements.Map.offsetLeft;
-            self.Pan.Element.YStart = self.Elements.Map.offsetTop;
-
             self.Pan.XStart = parseFloat((e.changedTouches[0].clientX - self.Elements.Parent.offsetLeft).toFixed(2));
             self.Pan.YStart = parseFloat((e.changedTouches[0].clientY - self.Elements.Parent.offsetTop).toFixed(2));
         });
@@ -319,9 +320,6 @@ class InteractiveMap {
             e.preventDefault();
 
             self.Pan.mouseDrag = true;
-
-            self.Pan.Element.XStart = self.Elements.Map.offsetLeft;
-            self.Pan.Element.YStart = self.Elements.Map.offsetTop;
 
             self.Pan.XStart = parseFloat((e.clientX - self.Elements.Parent.offsetLeft).toFixed(2));
             self.Pan.YStart = parseFloat((e.clientY - self.Elements.Parent.offsetTop).toFixed(2));
@@ -342,9 +340,6 @@ class InteractiveMap {
             self.Pan.mouseDrag = false;
 
             self.MapControlPanCallback();
-
-            self.Pan.Element.XStart = null;
-            self.Pan.Element.YStart = null;
             
             self.Pan.XStart = null;
             self.Pan.YStart = null;
@@ -354,9 +349,6 @@ class InteractiveMap {
                 self.Pan.mouseDrag = false;
 
                 self.MapControlPanCallback();
-
-                self.Pan.Element.XStart = null;
-                self.Pan.Element.YStart = null;
 
                 self.Pan.XStart = null;
                 self.Pan.YStart = null;
@@ -384,44 +376,76 @@ class InteractiveMap {
         });
 
         // Marker controls
+        var FilterWrapper = document.createElement('div');
+            FilterWrapper.className = 'iamap-filterwrapper';
+
+        var FilterWrapperClose = document.createElement('span');
+            FilterWrapperClose.className = 'close';
+            FilterWrapperClose.addEventListener('click', function(e){
+                self.ToggleMapSidebar('close');
+            });
+
+        FilterWrapper.appendChild(FilterWrapperClose);
+
+        this.Elements.Controllers.FilterWrapper = FilterWrapper;
+        this.Elements.Parent.appendChild(this.Elements.Controllers.FilterWrapper);
+
         for(let key in self.Markers){
             let Marker = self.Markers[key];
+
             if(Marker.controller === false){
                 return;
             }
 
-            var MControllerShow = document.createElement('input');
-                MControllerShow.type = "button";
-                MControllerShow.value = "Show group " + Marker.label;
-                MControllerShow.style.positino = "relative";
-                MControllerShow.addEventListener('click', function(e){
-                    e.preventDefault();
-                    self.ShowMarkers({
-                        type: 'group',
-                        group: Marker.id.toString()
-                    });
-                }); 
-            var MControllerHide = document.createElement('input');
-                MControllerHide.type = "button";
-                MControllerHide.value = "Hide group " + Marker.label;
-                MControllerHide.style.positino = "relative";
-                MControllerHide.addEventListener('click', function(e){
-                    e.preventDefault();
-                    self.HideMarkers({
-                        type: 'group',
-                        group: Marker.id.toString()
-                    });
-                }); 
-            
+            let MarkerController = document.createElement('label');
+                MarkerController.htmlFor = Marker.slug;
+            let MarkerControllerTxt = document.createTextNode(Marker.label);
+            let MarkerControllerInput = document.createElement('input');
+                MarkerControllerInput.type = 'checkbox';
+                MarkerControllerInput.checked = 'checked';
+                MarkerControllerInput.id = Marker.slug; MarkerControllerInput.name = Marker.slug;
+                MarkerControllerInput.addEventListener('change', function(e){
+                    if(this.checked) {
+                        MarkerController.classList.add('active');
+                        self.ShowMarkers({
+                            type: 'group',
+                            group: Marker.id.toString()
+                        });
+                    } else {
+                        MarkerController.classList.remove('active');
+                        self.HideMarkers({
+                            type: 'group',
+                            group: Marker.id.toString()
+                        });
+                    }
+                });
 
-            self.Elements.Controllers["ShowGroup"+Marker.id] = MControllerShow;
-            self.Elements.Controllers["HideGroup"+Marker.id] = MControllerHide;
+                MarkerController.append(
+                    MarkerControllerInput,
+                    MarkerControllerTxt
+                );
 
-            self.Elements.Controllers.Parent.appendChild(self.Elements.Controllers["ShowGroup"+Marker.id]);
-            self.Elements.Controllers.Parent.appendChild(self.Elements.Controllers["HideGroup"+Marker.id]);
+            this.Elements.Controllers["Group"+Marker.id] = MarkerController;
+            this.Elements.Controllers.FilterWrapper.appendChild(this.Elements.Controllers["Group"+Marker.id]);
         }
 
         return true;
+    }
+    ToggleMapSidebar(){
+        switch(arguments[0]) {
+            case 'close':  
+                this.Elements.Controllers.FilterWrapper.css({
+                    left: (this.Elements.Controllers.FilterWrapper.offsetWidth * -1) + "px"
+                });
+                break;
+            case 'open':
+                this.Elements.Controllers.FilterWrapper.css({
+                    left: unset
+                });
+                break;
+            default:
+                
+        }
     }
     MapShowCurrentLocation(){
         var self = this;
@@ -561,7 +585,7 @@ class InteractiveMap {
             this.Pan.Horizontal.isEnabled = false;
 
             if(this.Elements.Map.css({
-                left: self.Pan.Element.XStart + "px"
+                left: self.Pan.Element.XMax + "px"
             })){
                 this.Pan.Horizontal.isEnabled = true;
             }
@@ -578,7 +602,7 @@ class InteractiveMap {
             this.Pan.Vertical.isEnabled = false;
 
             if(this.Elements.Map.css({
-                top: self.Pan.Element.YStart + "px"
+                top: self.Pan.Element.YMax + "px"
             })){
                 this.Pan.Vertical.isEnabled = true;
             }
@@ -750,51 +774,3 @@ class InteractiveMapMarker {
         return this.position;
     }
 }
-
-/*
-var points = {
-    "1" : Array(
-        {
-            dest: "2",
-            dist: 1
-        }
-    ),
-    "2" : Array(
-        {
-            dest: "1",
-            dist: 3
-        },
-        {
-            dest: "3",
-            dist: 5
-        }
-    ),
-    "3" : Array(
-        {
-            dest: "2",
-            dist: 1
-        }
-    )
-}
-function go(c, d, h, dist){
-    var c = c.toString();
-    var d = d.toString();
-    var h = h ? h.concat(Array(c)) : Array(c);
-    var dist = dist ? dist : 0;
-
-    if(c !== d){
-        points[c].forEach(function(key){
-            if(h.indexOf(key.dest) !== -1){
-                return;
-            } else {
-                let r = go(key.dest, d, h, key.dist);
-                h = r[0]; dist += r[1];
-            }
-        });
-    } else {
-        return Array(h, dist);
-    }
-
-    return Array(h, dist);
-}
-*/
