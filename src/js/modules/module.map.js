@@ -2,7 +2,8 @@ class InteractiveMap {
     constructor(parent, map, config = null) {
         this.Viewport = {
             Width: parent.clientWidth,
-            Height: parent.clientHeight
+            Height: parent.clientHeight,
+            Orientation: null
         }
         this.Zoom = {
             Minimum: 1,
@@ -10,10 +11,18 @@ class InteractiveMap {
             Increase: 0.5
         }
         this.Zoom.Zoom = config && config.Zoom && config.Zoom >= this.Zoom.Minimum && config.Zoom <= this.Zoom.Maximum ? config.Zoom : 1;
-
         this.Pan = {
             Force: 0.09,
-            IsEnabled: true
+            IsEnabled: true,
+            Horizontal: {
+                isEnabled: true
+            },
+            Vertical: {
+                isEnabled: true
+            },
+            Element: {
+
+            }
         }
         this.Position = {
             x: config && config.Position ? config.Position.x : 0,
@@ -22,7 +31,7 @@ class InteractiveMap {
         this.Map = {
             Source: map.Map,
             AspectRatio: null,
-            Horizontal: null,
+            Orientation: null,
             RealWorld: map.UsesRealWorld
         }
         if(this.Map.RealWorld){
@@ -59,11 +68,13 @@ class InteractiveMap {
             }
         }
         
-        this.Elements = {};
-        this.Elements.Parent = parent;
+        this.Elements = {
+            Parent: parent
+        };
         this.SynchQueue = Array();
         this.InitiatedCall = false;
 
+        this.Animations = {};
         this.Markers = {};
 
         this.Load();
@@ -84,10 +95,10 @@ class InteractiveMap {
         var MapImageElement = new Image();
             MapImageElement.addEventListener('load', function(e){
                 if(MapImageElement.width / MapImageElement.height > 1){ 
-                    self.Map.Horizontal = true;
+                    self.Map.Orientation = 'horizontal';
                     self.Map.AspectRatio = MapImageElement.height / MapImageElement.width;
                 } else {
-                    self.Map.Horizontal = false;
+                    self.Map.Orientation = 'vertical';
                     self.Map.AspectRatio = MapImageElement.width / MapImageElement.height;
                 }
 
@@ -104,9 +115,10 @@ class InteractiveMap {
         // Refresh window size
         this.Viewport = {
             Width: this.Elements.Parent.clientWidth,
-            Height: this.Elements.Parent.clientHeight
+            Height: this.Elements.Parent.clientHeight,
+            Orientation: this.Elements.Parent.clientWidth > this.Elements.Parent.clientHeight ? 'horizontal' : 'vertical'
         }
-
+        
         // Initial settings
         if(!this.Elements.Map) {
             var MElement = document.createElement('div');
@@ -132,65 +144,71 @@ class InteractiveMap {
         }
 
         // Recalculate background proportions
-        if(this.Viewport.Width >= this.Viewport.Height) {
-            this.Elements.Map.style.backgroundSize = '100% auto';
-        } else {
-            this.Elements.Map.style.backgroundSize = 'auto 100%';
+        let MapOffset = {
+            left: 0,
+            top: 0
         }
-        
-        // Manually position map if needed, turn off dragging
-        if(this.Viewport.Width <= this.Viewport.Height) {
-            this.Elements.Map.style.width = (this.Viewport.Width * this.Zoom.Zoom) + "px";
-            this.Elements.Map.style.height = (this.Viewport.Width * this.Map.AspectRatio * this.Zoom.Zoom).toFixed(2) + "px";
 
-            if(parseFloat(this.Elements.Map.style.height) < this.Viewport.Height) {
-                let offsetY = (this.Viewport.Height - parseFloat(this.Elements.Map.style.height)).toFixed(2) / 2;
-                this.Pan.IsEnabled = false;
-                this.Elements.Map.style.left = "0px";
-                this.Elements.Map.style.top = offsetY + "px";
+        if(this.Viewport.Orientation == 'horizontal') {
+            var MapBgStyle = '100% auto';
+
+            var MapHeight = (this.Viewport.Height * this.Zoom.Zoom) + "px";
+            var MapWidth = (this.Viewport.Height / this.Map.AspectRatio  * this.Zoom.Zoom).toFixed(2) + "px";
+        } else {
+            var MapBgStyle = 'auto 100%';
+
+            var MapWidth = (this.Viewport.Width * this.Zoom.Zoom) + "px";
+            var MapHeight = (this.Viewport.Width * this.Map.AspectRatio * this.Zoom.Zoom).toFixed(2) + "px";
+        }
+
+        // Dragging is enabled by default
+        this.Pan.Horizontal.isEnabled = true
+        this.Pan.Vertical.isEnabled = true;
+
+        if(this.Map.Orientation == 'horizontal') {
+            if(parseFloat(MapWidth) <= this.Viewport.Width) {
+                MapOffset.left = (this.Viewport.Width - parseFloat(MapWidth)).toFixed(2) / 2;
+                MapOffset.top = (this.Viewport.Height - parseFloat(MapHeight)).toFixed(2) / 2;
             } else {
-                this.Pan.IsEnabled = true;
-
-                // Needs to be rewritten
-                if(!this.Pan.mouseDrag && !this.Pan.touchDrag){
-                    this.Elements.Map.style.top = "0px";
-                    this.Elements.Map.style.left = "0px";
+                if(parseFloat(MapHeight) < this.Viewport.Height) {
+                    MapOffset.top = (this.Viewport.Height - parseFloat(MapHeight)).toFixed(2) / 2;
                 }
             }
         } else {
-            this.Elements.Map.style.height = (this.Viewport.Height * this.Zoom.Zoom) + "px";
-            this.Elements.Map.style.width = (this.Viewport.Height / this.Map.AspectRatio  * this.Zoom.Zoom).toFixed(2) + "px";
-
-            if(parseFloat(this.Elements.Map.style.width) < this.Viewport.Width) {
-                let offsetX = (this.Viewport.Width - parseFloat(this.Elements.Map.style.width)).toFixed(2) / 2;
-                this.Pan.IsEnabled = false;
-                this.Elements.Map.style.top = "0px";
-                this.Elements.Map.style.left = offsetX + "px";
+            if(parseFloat(MapHeight) <= this.Viewport.Height) {
+                MapOffset.left = (this.Viewport.Width - parseFloat(MapWidth)).toFixed(2) / 2;
+                MapOffset.top = (this.Viewport.Height - parseFloat(MapHeight)).toFixed(2) / 2;
             } else {
-                this.Pan.IsEnabled = true;
-
-                // Needs to be rewritten
-                if(!this.Pan.mouseDrag && !this.Pan.touchDrag){
-                    this.Elements.Map.style.top = "0px";
-                    this.Elements.Map.style.left = "0px";
+                if(parseFloat(MapWidth) < this.Viewport.Width) {
+                    MapOffset.left = (this.Viewport.Width - parseFloat(MapWidth)).toFixed(2) / 2;
                 }
             }
         }
 
-        // Recalculate coordinates step
+        if(parseFloat(MapWidth) <= this.Viewport.Width) {
+            this.Pan.Horizontal.isEnabled = false;
+        }
+        if(parseFloat(MapHeight) <= this.Viewport.Height) {
+            this.Pan.Vertical.isEnabled = false;
+        }
+
+        this.Elements.Map.style.backgroundSize = MapBgStyle;
+        this.Elements.Map.style.left = MapOffset.left + "px";
+        this.Elements.Map.style.top = MapOffset.top + "px";
+        this.Elements.Map.style.width = MapWidth;
+        this.Elements.Map.style.height = MapHeight;
+
+        // Coordinates, Markers, Location
         let MapSize = {
             w: parseFloat(this.Elements.Map.style.width),
             h: parseFloat(this.Elements.Map.style.height)
         }
-
         if(!this.Map.StepSize.hor.px) {
             this.Map.StepSize.hor.px = MapSize.w / (this.Map.Distances.hor / this.Map.Step);
         }
         if(!this.Map.StepSize.ver.px) {
             this.Map.StepSize.ver.px = MapSize.h / (this.Map.Distances.ver / this.Map.Step);
         }
-
-        // Render markers
         if(this.Markers){
             for(let g in this.Markers){
                 let MarkerGroup = this.Markers[g].items;
@@ -229,6 +247,8 @@ class InteractiveMap {
 
             }
         }
+
+        console.log('H ', this.Pan.Horizontal.isEnabled, 'V ', this.Pan.Vertical.isEnabled);
 
         return true;
     }
@@ -288,6 +308,10 @@ class InteractiveMap {
             e.preventDefault();
 
             self.Pan.touchDrag = true;
+
+            self.Pan.Element.XStart = self.Elements.Map.offsetLeft;
+            self.Pan.Element.YStart = self.Elements.Map.offsetTop;
+
             self.Pan.XStart = parseFloat((e.changedTouches[0].clientX - self.Elements.Parent.offsetLeft).toFixed(2));
             self.Pan.YStart = parseFloat((e.changedTouches[0].clientY - self.Elements.Parent.offsetTop).toFixed(2));
         });
@@ -295,13 +319,20 @@ class InteractiveMap {
             e.preventDefault();
 
             self.Pan.mouseDrag = true;
-            self.Pan.XStart = e.clientX - self.Elements.Parent.offsetLeft;
-            self.Pan.YStart = e.clientY - self.Elements.Parent.offsetTop;
+
+            self.Pan.Element.XStart = self.Elements.Map.offsetLeft;
+            self.Pan.Element.YStart = self.Elements.Map.offsetTop;
+
+            self.Pan.XStart = parseFloat((e.clientX - self.Elements.Parent.offsetLeft).toFixed(2));
+            self.Pan.YStart = parseFloat((e.clientY - self.Elements.Parent.offsetTop).toFixed(2));
         });
         this.Elements.Map.addEventListener('touchend', function(e){
             e.preventDefault();
 
             self.Pan.touchDrag = false;
+
+            self.MapControlPanCallback();
+
             self.Pan.XStart = null;
             self.Pan.YStart = null;
         });
@@ -309,12 +340,24 @@ class InteractiveMap {
             e.preventDefault();
 
             self.Pan.mouseDrag = false;
+
+            self.MapControlPanCallback();
+
+            self.Pan.Element.XStart = null;
+            self.Pan.Element.YStart = null;
+            
             self.Pan.XStart = null;
             self.Pan.YStart = null;
         });
         this.Elements.Map.addEventListener('mouseleave', function(e){
             if(self.Pan.mouseDrag){
                 self.Pan.mouseDrag = false;
+
+                self.MapControlPanCallback();
+
+                self.Pan.Element.XStart = null;
+                self.Pan.Element.YStart = null;
+
                 self.Pan.XStart = null;
                 self.Pan.YStart = null;
             }
@@ -453,6 +496,21 @@ class InteractiveMap {
         return this.Render();
     }
     MapControlPan(clientX, clientY){
+        if(!this.Pan.Vertical.isEnabled && !this.Pan.Horizontal.isEnabled) {
+            return false;
+        }
+
+        /*
+
+        There new pan controller must use variables:
+            - Pan.Horizontal.isEnabled
+            - Pan.Vertical.isEnabled
+        
+        The boundaries will no longer be controlled here in this script.
+        Instead, they will be controlled by callback, which, if needed, moves the map back to the viewport.
+
+        */
+
         let hor = parseFloat((clientX - this.Pan.XStart).toFixed(2));
         let ver = parseFloat((clientY - this.Pan.YStart).toFixed(2));
 
@@ -465,40 +523,66 @@ class InteractiveMap {
         let offsetX = this.Elements.Map.offsetLeft ? this.Elements.Map.offsetLeft : 0;
         let offsetY = this.Elements.Map.offsetTop ? this.Elements.Map.offsetTop : 0;
 
-        let offsetMax = {
+        this.Pan.Boundaries = {
             top: 0,
             right: (this.Elements.Map.offsetWidth - this.Viewport.Width) * -1,
             bottom: (this.Elements.Map.offsetHeight - this.Viewport.Height) * -1,
             left: 0
         }
 
-        switch(this.Pan.XStart - directionX > 0) {
-            case true:
-                if(offsetX > offsetMax.left) {
-                    offsetX = offsetMax.left;
-                }
-                break;
-            case false:
-                if(offsetX < offsetMax.right){
-                    offsetX = offsetMax.right;
-                }
-                break;
+        if(this.Pan.Horizontal.isEnabled) {
+            this.Elements.Map.style.left = parseFloat(offsetX + hor) + "px";
         }
-        switch(this.Pan.YStart - directionY > 0){
-            case true:
-                if(offsetY > offsetMax.top){
-                    offsetY = offsetMax.top;
-                }
-                break;
-            case false:
-                if(offsetY < offsetMax.bottom){
-                    offsetY = offsetMax.bottom;
-                }
-                break;
+        if(this.Pan.Vertical.isEnabled) {
+            this.Elements.Map.style.top = parseFloat(offsetY + ver) + "px";
+        }
+    }
+    MapControlPanCallback(){
+
+        let self = this;
+
+        let PanCallbackOptions = {
+            duration: 150,
+            iterations: 1
         }
 
-        this.Elements.Map.style.left = parseFloat(offsetX + hor) + "px";
-        this.Elements.Map.style.top = parseFloat(offsetY + ver) + "px";
+        let Keyframes = Array(
+            {},
+            {}
+        );
+
+        if(
+            this.Pan.Horizontal.isEnabled &&
+            ( 
+                this.Elements.Map.offsetLeft < this.Pan.Boundaries.right ||
+                this.Elements.Map.offsetLeft > this.Pan.Boundaries.left
+            )
+        ) {
+            this.Pan.Horizontal.isEnabled = false;
+
+            if(this.Elements.Map.css({
+                left: self.Pan.Element.XStart + "px"
+            })){
+                this.Pan.Horizontal.isEnabled = true;
+            }
+        }
+
+        // Vertical cb
+        if(
+            this.Pan.Vertical.isEnabled &&
+            (
+                this.Elements.Map.offsetTop < this.Pan.Boundaries.bottom ||
+                this.Elements.Map.offsetTop > this.Pan.Boundaries.top
+            ) 
+        ) {
+            this.Pan.Vertical.isEnabled = false;
+
+            if(this.Elements.Map.css({
+                top: self.Pan.Element.YStart + "px"
+            })){
+                this.Pan.Vertical.isEnabled = true;
+            }
+        }
     }
     AddMarkers(markers, context){
         if(!this.Elements.Map){
