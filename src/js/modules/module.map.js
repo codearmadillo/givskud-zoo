@@ -375,6 +375,8 @@ class InteractiveMap {
             }
         });
 
+        return true
+
         // Marker controls
         var FilterWrapper = document.createElement('div');
             FilterWrapper.className = 'iamap-filterwrapper';
@@ -565,16 +567,6 @@ class InteractiveMap {
 
         let self = this;
 
-        let PanCallbackOptions = {
-            duration: 150,
-            iterations: 1
-        }
-
-        let Keyframes = Array(
-            {},
-            {}
-        );
-
         if(
             this.Pan.Horizontal.isEnabled &&
             ( 
@@ -584,14 +576,20 @@ class InteractiveMap {
         ) {
             this.Pan.Horizontal.isEnabled = false;
 
-            if(this.Elements.Map.css({
-                left: self.Pan.Element.XMax + "px"
-            })){
-                this.Pan.Horizontal.isEnabled = true;
+            if(this.Elements.Map.offsetLeft < this.Pan.Boundaries.right) {
+                this.Elements.Map.css({
+                    left: this.Pan.Boundaries.right + "px"
+                });
             }
+            if(this.Elements.Map.offsetLeft > this.Pan.Boundaries.left) {
+                this.Elements.Map.css({
+                    left: this.Pan.Boundaries.left + "px"
+                });
+            }
+
+            this.Pan.Horizontal.isEnabled = true;
         }
 
-        // Vertical cb
         if(
             this.Pan.Vertical.isEnabled &&
             (
@@ -601,11 +599,18 @@ class InteractiveMap {
         ) {
             this.Pan.Vertical.isEnabled = false;
 
-            if(this.Elements.Map.css({
-                top: self.Pan.Element.YMax + "px"
-            })){
-                this.Pan.Vertical.isEnabled = true;
+            if(this.Elements.Map.offsetTop < this.Pan.Boundaries.bottom) {
+                this.Elements.Map.css({
+                    top: this.Pan.Boundaries.bottom + "px"
+                });
             }
+            if(this.Elements.Map.offsetTop > this.Pan.Boundaries.top) {
+                this.Elements.Map.css({
+                    top: this.Pan.Boundaries.top + "px"
+                });
+            }
+
+            this.Pan.Vertical.isEnabled = true;
         }
     }
     AddMarkers(markers, context){
