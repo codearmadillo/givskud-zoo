@@ -22,8 +22,13 @@ class InteractiveMap {
             },
             Element: {
 
-            }
+            },
+            XStart: null,
+            YStart: null,
+            mouseDrag: false,
+            touchDrag: false
         }
+
         this.Position = {
             x: config && config.Position ? config.Position.x : 0,
             y: config && config.Position ? config.Position.y : 0
@@ -70,13 +75,8 @@ class InteractiveMap {
 
         this.Load();
     }
-    Loader() {
-        var loaderElement = document.createElement('span');
-            loaderElement.className = 'iamap-loader';
-            loaderElement.textContent = 'Loading resources';
 
-            return loaderElement;
-    }
+    // Iteration cycles
     Load() {
         var self = this;
 
@@ -244,6 +244,32 @@ class InteractiveMap {
 
         return true;
     }
+
+    // Preload element
+    Loader() {
+        var loaderElement = document.createElement('span');
+            loaderElement.className = 'iamap-loader';
+            loaderElement.textContent = 'Loading resources';
+
+            return loaderElement;
+    }
+
+    // Geographical and location services
+    GetGeographicDistance(lon1,lat1,lon2,lat2){
+        let R = 6391;
+        let dLat = this.Deg2Rad(lat2 - lat1);
+        let dLon = this.Deg2Rad(lon2 - lon1);
+        let a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(this.Deg2Rad(lat1)) * Math.cos(this.Deg2Rad(lat2)) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2)
+        ; 
+        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        return R * c * 1000;
+    }
+    Deg2Rad(deg){
+        return deg * (Math.PI/180);
+    }
     CalculateDistances() {
         this.Map.StepSize = {
             hor: {
@@ -254,199 +280,6 @@ class InteractiveMap {
                 coords: this.Map.Area.Latitude / (this.Map.Distances.ver / this.Map.Step),
                 px: null
             }
-        }
-    }
-    CreateControllers() {
-        var self = this;
-
-        this.Elements.Controllers = {};
-
-        var ControllersElement = document.createElement('div');
-            ControllersElement.className = 'iamap-controllerslayer';
-            ControllersElement.style.position = 'absolute';
-            ControllersElement.style.top = 0; ControllersElement.style.left = 0;
-            ControllersElement.style.zIndex = 100;
-        this.Elements.Controllers.Parent = ControllersElement;
-        this.Elements.Parent.appendChild(this.Elements.Controllers.Parent);
-
-        var LocationController = document.createElement('input');
-            LocationController.type = 'button';
-            LocationController.value = 'My location';
-            LocationController.style.position = 'relative';
-            LocationController.addEventListener('click', function(e){
-                e.preventDefault();
-                self.MapShowCurrentLocation();
-            }); 
-        this.Elements.Controllers.Location = LocationController;
-        this.Elements.Controllers.Parent.appendChild(this.Elements.Controllers.Location);
-
-        var ZoomInController = document.createElement('input');
-            ZoomInController.type = "button";
-            ZoomInController.value = "Zoom in";
-            ZoomInController.style.position = "relative";
-            ZoomInController.addEventListener('click', function(e){
-                e.preventDefault();
-                self.MapControlZoom(true);
-            });
-        this.Elements.Controllers.ZoomIn = ZoomInController;
-        this.Elements.Controllers.Parent.appendChild(this.Elements.Controllers.ZoomIn);
-
-        var ZoomOutController = document.createElement('input');
-            ZoomOutController.type = 'button';
-            ZoomOutController.value = 'Zoom out';
-            ZoomOutController.style.position = "relative";
-            ZoomOutController.addEventListener('click', function(e){
-                e.preventDefault();
-                self.MapControlZoom(false);
-            });
-        this.Elements.Controllers.ZoomOut = ZoomOutController;
-        this.Elements.Controllers.Parent.appendChild(this.Elements.Controllers.ZoomOut);
-
-        this.Pan.XStart = null;
-        this.Pan.YStart = null;
-
-        this.Pan.mouseDrag = false;
-        this.Pan.touchDrag = false;
-
-        this.Elements.Map.addEventListener('touchstart', function(e){
-            e.preventDefault();
-
-            self.Pan.touchDrag = true;
-
-            self.Pan.XStart = parseFloat((e.changedTouches[0].clientX - self.Elements.Parent.offsetLeft).toFixed(2));
-            self.Pan.YStart = parseFloat((e.changedTouches[0].clientY - self.Elements.Parent.offsetTop).toFixed(2));
-        });
-        this.Elements.Map.addEventListener('mousedown', function(e){
-            e.preventDefault();
-
-            self.Pan.mouseDrag = true;
-
-            self.Pan.XStart = parseFloat((e.clientX - self.Elements.Parent.offsetLeft).toFixed(2));
-            self.Pan.YStart = parseFloat((e.clientY - self.Elements.Parent.offsetTop).toFixed(2));
-        });
-        this.Elements.Map.addEventListener('touchend', function(e){
-            e.preventDefault();
-
-            self.Pan.touchDrag = false;
-
-            self.MapControlPanCallback();
-
-            self.Pan.XStart = null;
-            self.Pan.YStart = null;
-        });
-        this.Elements.Map.addEventListener('mouseup', function(e){
-            e.preventDefault();
-
-            self.Pan.mouseDrag = false;
-
-            self.MapControlPanCallback();
-            
-            self.Pan.XStart = null;
-            self.Pan.YStart = null;
-        });
-        this.Elements.Map.addEventListener('mouseleave', function(e){
-            if(self.Pan.mouseDrag){
-                self.Pan.mouseDrag = false;
-
-                self.MapControlPanCallback();
-
-                self.Pan.XStart = null;
-                self.Pan.YStart = null;
-            }
-        });
-        this.Elements.Map.addEventListener('mousemove', function(e){
-            e.preventDefault();
-
-            if(self.Pan.mouseDrag && self.Pan.IsEnabled){
-                let cursorX = window.event.clientX;
-                let cursorY = window.event.clientY;
-
-                self.MapControlPan(cursorX, cursorY);
-            }
-        });
-        this.Elements.Map.addEventListener('touchmove', function(e){
-            e.preventDefault;
-
-            if(self.Pan.touchDrag && self.Pan.IsEnabled){
-                let cursorX = parseFloat((window.event.changedTouches[0].clientX).toFixed(2));
-                let cursorY = parseFloat((window.event.changedTouches[0].clientY).toFixed(2));
-
-                self.MapControlPan(cursorX, cursorY);
-            }
-        });
-
-        return true
-
-        // Marker controls
-        var FilterWrapper = document.createElement('div');
-            FilterWrapper.className = 'iamap-filterwrapper';
-
-        var FilterWrapperClose = document.createElement('span');
-            FilterWrapperClose.className = 'close';
-            FilterWrapperClose.addEventListener('click', function(e){
-                self.ToggleMapSidebar('close');
-            });
-
-        FilterWrapper.appendChild(FilterWrapperClose);
-
-        this.Elements.Controllers.FilterWrapper = FilterWrapper;
-        this.Elements.Parent.appendChild(this.Elements.Controllers.FilterWrapper);
-
-        for(let key in self.Markers){
-            let Marker = self.Markers[key];
-
-            if(Marker.controller === false){
-                return;
-            }
-
-            let MarkerController = document.createElement('label');
-                MarkerController.htmlFor = Marker.slug;
-            let MarkerControllerTxt = document.createTextNode(Marker.label);
-            let MarkerControllerInput = document.createElement('input');
-                MarkerControllerInput.type = 'checkbox';
-                MarkerControllerInput.checked = 'checked';
-                MarkerControllerInput.id = Marker.slug; MarkerControllerInput.name = Marker.slug;
-                MarkerControllerInput.addEventListener('change', function(e){
-                    if(this.checked) {
-                        MarkerController.classList.add('active');
-                        self.ShowMarkers({
-                            type: 'group',
-                            group: Marker.id.toString()
-                        });
-                    } else {
-                        MarkerController.classList.remove('active');
-                        self.HideMarkers({
-                            type: 'group',
-                            group: Marker.id.toString()
-                        });
-                    }
-                });
-
-                MarkerController.append(
-                    MarkerControllerInput,
-                    MarkerControllerTxt
-                );
-
-            this.Elements.Controllers["Group"+Marker.id] = MarkerController;
-            this.Elements.Controllers.FilterWrapper.appendChild(this.Elements.Controllers["Group"+Marker.id]);
-        }
-
-        return true;
-    }
-    ToggleMapSidebar(){
-        switch(arguments[0]) {
-            case 'close':  
-                this.Elements.Controllers.FilterWrapper.css({
-                    left: (this.Elements.Controllers.FilterWrapper.offsetWidth * -1) + "px"
-                });
-                break;
-            case 'open':
-                this.Elements.Controllers.FilterWrapper.css({
-                    left: unset
-                });
-                break;
-            default:
-                
         }
     }
     MapShowCurrentLocation(){
@@ -506,6 +339,8 @@ class InteractiveMap {
 
         return true;
     }
+
+    // Map event callbacks
     MapControlZoom(ZoomIn){
         let posX = this.Position.x / this.Zoom.Zoom;
         let posY = this.Position.y / this.Zoom.Zoom;
@@ -526,35 +361,14 @@ class InteractiveMap {
             return false;
         }
 
-        /*
-
-        There new pan controller must use variables:
-            - Pan.Horizontal.isEnabled
-            - Pan.Vertical.isEnabled
-        
-        The boundaries will no longer be controlled here in this script.
-        Instead, they will be controlled by callback, which, if needed, moves the map back to the viewport.
-
-        */
-
         let hor = parseFloat((clientX - this.Pan.XStart).toFixed(2));
         let ver = parseFloat((clientY - this.Pan.YStart).toFixed(2));
-
-        let directionX = this.Pan.XStart;
-        let directionY = this.Pan.YStart;
 
         this.Pan.XStart = clientX;
         this.Pan.YStart = clientY;
 
         let offsetX = this.Elements.Map.offsetLeft ? this.Elements.Map.offsetLeft : 0;
         let offsetY = this.Elements.Map.offsetTop ? this.Elements.Map.offsetTop : 0;
-
-        this.Pan.Boundaries = {
-            top: 0,
-            right: (this.Elements.Map.offsetWidth - this.Viewport.Width) * -1,
-            bottom: (this.Elements.Map.offsetHeight - this.Viewport.Height) * -1,
-            left: 0
-        }
 
         if(this.Pan.Horizontal.isEnabled) {
             this.Elements.Map.style.left = parseFloat(offsetX + hor) + "px";
@@ -564,6 +378,13 @@ class InteractiveMap {
         }
     }
     MapControlPanCallback(){
+
+        this.Pan.Boundaries = {
+            top: 0,
+            right: (this.Elements.Map.offsetWidth - this.Viewport.Width) * -1,
+            bottom: (this.Elements.Map.offsetHeight - this.Viewport.Height) * -1,
+            left: 0
+        }
 
         let self = this;
 
@@ -613,6 +434,8 @@ class InteractiveMap {
             this.Pan.Vertical.isEnabled = true;
         }
     }
+
+    // Markers
     AddMarkers(markers, context){
         if(!this.Elements.Map){
             return this.AddToSynchQueue('AddMarkers', this, Array(markers));
@@ -724,6 +547,197 @@ class InteractiveMap {
 
         return Markers == null ? false : Markers;
     }
+
+    // Map controllers
+    CreateControllers() {
+        var self = this;
+
+        this.Elements.Controllers = {};
+
+        var ControllersElement = document.createElement('div');
+            ControllersElement.Properties({
+                className: 'iamap-controllerslayer'
+            });
+            ControllersElement.css({
+                position: 'absolute',
+                bottom: "15px",
+                right: "15px",
+                zIndex: 100,
+                textAlign: 'right'
+            });
+        this.Elements.Controllers.Parent = ControllersElement;
+        this.Elements.Parent.appendChild(this.Elements.Controllers.Parent);
+
+        // Location controller
+        var LocationController = document.createElement('span');
+            LocationController.css({
+                position: 'relative',
+                display: 'inline-block',
+                width: '32px',
+                height: '32px',
+                backgroundSize: '32px 32px',
+                backgroundImage: 'url("assets/map.icon.location.svg")',
+                marginRight: "32px"
+            });
+            LocationController.addEventListener('click', function(e){
+                e.preventDefault();
+                self.MapShowCurrentLocation();
+            }); 
+        this.Elements.Controllers.Location = LocationController;
+        this.Elements.Controllers.Parent.appendChild(this.Elements.Controllers.Location);
+
+
+        // Zoom controllers
+        var ZoomInController = document.createElement('span');
+            ZoomInController.css({
+                position: 'relative',
+                display: 'inline-block',
+                width: '32px',
+                height: '32px',
+                backgroundSize: '32px 32px',
+                backgroundImage: 'url("assets/map.icon.zoom-in.svg")'
+            });
+            ZoomInController.addEventListener('click', function(e){
+                e.preventDefault();
+                self.MapControlZoom(true);
+            });
+        this.Elements.Controllers.ZoomIn = ZoomInController;
+        this.Elements.Controllers.Parent.appendChild(this.Elements.Controllers.ZoomIn);
+
+        var ZoomOutController = document.createElement('span');
+            ZoomOutController.css({
+                position: 'relative',
+                display: 'inline-block',
+                width: '32px',
+                height: '32px',
+                backgroundSize: '32px 32px',
+                backgroundImage: 'url("assets/map.icon.zoom-out.svg")',
+                marginLeft: "6px"
+            });
+            ZoomOutController.addEventListener('click', function(e){
+                e.preventDefault();
+                self.MapControlZoom(false);
+            });
+        this.Elements.Controllers.ZoomOut = ZoomOutController;
+        this.Elements.Controllers.Parent.appendChild(this.Elements.Controllers.ZoomOut);
+
+        // Map movement
+        this.Elements.Map.addMultipleListeners('mousedown', 'touchstart', function(e){
+            e.preventDefault();
+
+            switch(e.type) {
+                case 'mousedown':
+                    self.Pan.mouseDrag = true;
+
+                    self.Pan.XStart = parseFloat((e.clientX - self.Elements.Parent.offsetLeft).toFixed(2));
+                    self.Pan.YStart = parseFloat((e.clientY - self.Elements.Parent.offsetTop).toFixed(2));
+
+                    break;
+                case 'touchstart':
+                    self.Pan.touchDrag = true;
+
+                    self.Pan.XStart = parseFloat((e.changedTouches[0].clientX - self.Elements.Parent.offsetLeft).toFixed(2));
+                    self.Pan.YStart = parseFloat((e.changedTouches[0].clientY - self.Elements.Parent.offsetTop).toFixed(2));
+
+                    break;
+            }
+        });
+        this.Elements.Map.addMultipleListeners('mousemove', 'touchmove', function(e){
+            e.preventDefault();
+
+            switch(e.type){
+                case 'mousemove':
+                    if(self.Pan.mouseDrag && self.Pan.IsEnabled){
+                        var cursorX = window.event.clientX;
+                        var cursorY = window.event.clientY;
+                    } else {
+                        return false;
+                    }
+                    break;
+                case 'touchmove':
+                    if(self.Pan.touchDrag && self.Pan.IsEnabled){
+                        var cursorX = parseFloat((window.event.changedTouches[0].clientX).toFixed(2));
+                        var cursorY = parseFloat((window.event.changedTouches[0].clientY).toFixed(2));
+                    } else {
+                        return false;
+                    }
+                    break;
+            }
+
+            self.MapControlPan(cursorX, cursorY);
+        });
+        this.Elements.Map.addMultipleListeners('mouseup', 'mouseleave', 'touchend', function(e){
+            e.preventDefault();
+
+            self.Pan.touchDrag = false;
+            self.Pan.mouseDrag = false;
+
+            self.MapControlPanCallback();
+
+            self.Pan.XStart = null;
+            self.Pan.YStart = null;
+        });
+
+        return true
+
+        // Marker controls
+        var FilterWrapper = document.createElement('div');
+            FilterWrapper.className = 'iamap-filterwrapper';
+
+        var FilterWrapperClose = document.createElement('span');
+            FilterWrapperClose.className = 'close';
+            FilterWrapperClose.addEventListener('click', function(e){
+                self.ToggleMapSidebar('close');
+            });
+
+        FilterWrapper.appendChild(FilterWrapperClose);
+
+        this.Elements.Controllers.FilterWrapper = FilterWrapper;
+        this.Elements.Parent.appendChild(this.Elements.Controllers.FilterWrapper);
+
+        for(let key in self.Markers){
+            let Marker = self.Markers[key];
+
+            if(Marker.controller === false){
+                return;
+            }
+
+            let MarkerController = document.createElement('label');
+                MarkerController.htmlFor = Marker.slug;
+            let MarkerControllerTxt = document.createTextNode(Marker.label);
+            let MarkerControllerInput = document.createElement('input');
+                MarkerControllerInput.type = 'checkbox';
+                MarkerControllerInput.checked = 'checked';
+                MarkerControllerInput.id = Marker.slug; MarkerControllerInput.name = Marker.slug;
+                MarkerControllerInput.addEventListener('change', function(e){
+                    if(this.checked) {
+                        MarkerController.classList.add('active');
+                        self.ShowMarkers({
+                            type: 'group',
+                            group: Marker.id.toString()
+                        });
+                    } else {
+                        MarkerController.classList.remove('active');
+                        self.HideMarkers({
+                            type: 'group',
+                            group: Marker.id.toString()
+                        });
+                    }
+                });
+
+                MarkerController.append(
+                    MarkerControllerInput,
+                    MarkerControllerTxt
+                );
+
+            this.Elements.Controllers["Group"+Marker.id] = MarkerController;
+            this.Elements.Controllers.FilterWrapper.appendChild(this.Elements.Controllers["Group"+Marker.id]);
+        }
+
+        return true;
+    }
+
+    // Queue
     AddToSynchQueue(name, context, args){
         let self = this;
 
@@ -742,21 +756,6 @@ class InteractiveMap {
             }
             self[e.f].apply(self, e.data);
         });
-    }
-    GetGeographicDistance(lon1,lat1,lon2,lat2){
-        let R = 6391;
-        let dLat = this.Deg2Rad(lat2 - lat1);
-        let dLon = this.Deg2Rad(lon2 - lon1);
-        let a = 
-            Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(this.Deg2Rad(lat1)) * Math.cos(this.Deg2Rad(lat2)) * 
-            Math.sin(dLon/2) * Math.sin(dLon/2)
-        ; 
-        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-        return R * c * 1000;
-    }
-    Deg2Rad(deg){
-        return deg * (Math.PI/180);
     }
 }
 class InteractiveMapMarker {
