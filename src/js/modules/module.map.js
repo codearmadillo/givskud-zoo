@@ -434,6 +434,46 @@ class InteractiveMap {
             this.Pan.Vertical.isEnabled = true;
         }
     }
+    MoveToLocation(m) {
+        if(this.Markers.hasOwnProperty(m.groupId) && this.Markers[m.groupId].items.hasOwnProperty(m.itemId)){
+            this.Zoom.Zoom = this.Zoom.Maximum;
+            this.Render();
+
+            let Item = this.Markers[m.groupId].items[m.itemId];
+
+            return {
+                h: Math.abs(Item.position.x - this.Map.Longitude.Start) / Map.Map.StepSize.hor.coords * Map.Map.StepSize.hor.px * this.Zoom.Zoom * (-1),
+                v: Math.abs(Item.position.y - this.Map.Latitude.Start) / Map.Map.StepSize.ver.coords * Map.Map.StepSize.ver.px * this.Zoom.Zoom * (-1)
+            };
+
+            this.Elements.Map.css({
+                left: calculatedOffset.h + "px",
+                top: calculatedOffset.v + "px"
+            });
+
+            /*
+            let requiredViewportOffset = {
+                h: this.Viewport.Width / 2 - Item.Element.offsetWidth / 2,
+                v: this.Viewport.Height / 2 - Item.Element.offsetHeight / 2
+            }
+            let pointOffset = {
+                h: Item.Element.offsetLeft,
+                v: Item.Element.offsetTop
+            }
+            console.log({
+                left: (pointOffset.h * (-1) + requiredViewportOffset.h) + "px",
+                top: (pointOffset.v * (-1) + requiredViewportOffset.v) + "px"
+            });
+            */
+
+            return this.Render();
+        } else {
+            return false;
+        }
+    }
+    MapCoverArea(lon1, lat1, lon2, lat2){
+
+    }
 
     // Markers
     AddMarkers(markers, context){
