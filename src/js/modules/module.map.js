@@ -117,13 +117,14 @@ class InteractiveMap {
         if(!this.Elements.Map) {
             var MElement = document.createElement('div');
                 MElement.className = 'iamap-maplayer';
-                MElement.style.position = 'relative';
 
-                MElement.style.backgroundImage = "url('" + this.Map.Source + "')";
-                MElement.style.backgroundRepeat = 'no-repeat';
-                MElement.style.backgroundPosition = 'center center';
-
-                MElement.style.zIndex = 50;
+                MElement.css({
+                    position: "relative",
+                    backgroundImage: "url('" + this.Map.Source + "')",
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center center",
+                    zIndex: 50
+                });
 
             this.Elements.Map = MElement;
             this.Elements.Parent.appendChild(this.Elements.Map);

@@ -49,6 +49,18 @@
                 "End": 54.55877948
             }
         }
+        var MapConfig = {
+            Map: "assets/map.first-run.svg",
+            UsesRealWorld: true,
+            Longitude: {
+                Start: 9.34326,
+                End: 9.35944
+            },
+            Latitude: {
+                Start: 55.81296,
+                End: 55.80235
+            }
+        }
         var Config = {
             Position: {
                 x: 10,
@@ -56,7 +68,7 @@
             },
             Zoom: 1
         }
-        var MarkersData = Array({
+        var DemoMarkersData = Array({
             group: {
                 id: 0,
                 slug: 'cities',
@@ -85,8 +97,37 @@
                 y: 55.403756
             }
         });
+        var MarkersData = Array({
+            group: {
+                id: 0,
+                slug: 'cities',
+                label: 'Cities',
+                icon: null
+            },
+            id: 1226,
+            label: 'Lions',
+            description: 'Description',
+            position: {
+                x: 9.35288,
+                y: 55.80825
+            }
+        }, {
+            group: {
+                id: 0,
+                slug: 'cities',
+                label: 'Cities',
+                icon: null
+            },
+            id: 4551,
+            label: 'Elephants',
+            description: 'Description',
+            position: {
+                x: 9.34997,
+                y: 55.81149
+            }
+        });
 
-        var Map = new InteractiveMap(document.getElementById('map-element'), DemoMapConfig, Config);
+        var Map = new InteractiveMap(document.getElementById('map-element'), MapConfig, Config);
         Map.AddMarkers(MarkersData);
     </script>
 </body>
