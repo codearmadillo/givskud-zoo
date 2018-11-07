@@ -172,9 +172,7 @@ class InteractiveMap {
 
                     this.Elements.Map.style.top = MapOffset.top + "px";
                 }
-            }
-
-            
+            }  
         } else {
             if(parseFloat(MapHeight) <= this.Viewport.Height) {
                 MapOffset.left = (this.Viewport.Width - parseFloat(MapWidth)).toFixed(2) / 2;
@@ -250,6 +248,13 @@ class InteractiveMap {
                 }
 
             }
+        }
+
+        this.Pan.Boundaries = {
+            top: 0,
+            right: (this.Elements.Map.offsetWidth - this.Viewport.Width) * -1,
+            bottom: (this.Elements.Map.offsetHeight - this.Viewport.Height) * -1,
+            left: 0
         }
 
         return true;
@@ -347,7 +352,7 @@ class InteractiveMap {
                 break;
         }
 
-        return true;
+        return false;
     }
 
     // Map event callbacks
@@ -364,6 +369,10 @@ class InteractiveMap {
         this.Position.x = posX * this.Zoom.Zoom;
         this.Position.y = posY * this.Zoom.Zoom;
 
+        return this.Render();
+    }
+    ZoomTo(increment){
+        this.Zoom.Zoom = increment;
         return this.Render();
     }
     MapControlPan(clientX, clientY){
@@ -500,8 +509,7 @@ class InteractiveMap {
     MoveToLocation(m) {
 
         if(this.Markers.hasOwnProperty(m.groupId) && this.Markers[m.groupId].items.hasOwnProperty(m.itemId)){
-            this.Zoom.Zoom = this.Zoom.Maximum;
-            this.Render();
+            this.ZoomTo(3);
 
             let Item = this.Markers[m.groupId].items[m.itemId];
 
@@ -518,12 +526,24 @@ class InteractiveMap {
                 v: pointOffset.v + viewportOffset.v
             }
 
-            this.Pan.IsPreset = true;
+            if(calculatedOffset.h > this.Pan.Boundaries.left) {
+                calculatedOffset.h = this.Pan.Boundaries.left;
+            } else if (calculatedOffset.h < this.Pan.Boundaries.right) {
+                calculatedOffset.h = this.Pan.Boundaries.right;
+            }
+
+            if(calculatedOffset.v > this.Pan.Boundaries.top) {
+                calculatedOffset.v = this.Pan.Boundaries.top;
+            } else if (calculatedOffset.v < this.Pan.Boundaries.bottom) {
+                calculatedOffset.v = this.Pan.Boundaries.bottom;
+            }
 
             this.Elements.Map.css({
                 left: calculatedOffset.h + "px",
                 top: calculatedOffset.v + "px"
             });
+
+            this.HighlightMarker(Item.id, Item.group.id);
 
             return this.Render();
         } else {
@@ -645,6 +665,9 @@ class InteractiveMap {
         }
 
         return Markers == null ? false : Markers;
+    }
+    HighlightMarker(id, grp) {
+        return console.log('Highlighting marker ', id, ' from group ', grp);
     }
 
     // Map controllers
@@ -849,11 +872,12 @@ class InteractiveMap {
     RunSynchQueue(){
         let self = this;
 
-        this.SynchQueue.forEach(function(e){
+        this.SynchQueue.forEach(function(e, key){
             if(e.c) {
                 e.data.push(self);
             }
             self[e.f].apply(self, e.data);
+            self.SynchQueue.splice(key, 1);
         });
     }
 }
