@@ -1,4 +1,4 @@
-Element.prototype.TwoStepAnimation = function(keyframes, options, cb){
+Element.prototype.Animation = function(keyframes, options, cb){
     let element = this;
     let callback;
 

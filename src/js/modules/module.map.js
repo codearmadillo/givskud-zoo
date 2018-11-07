@@ -163,18 +163,30 @@ class InteractiveMap {
             if(parseFloat(MapWidth) <= this.Viewport.Width) {
                 MapOffset.left = (this.Viewport.Width - parseFloat(MapWidth)).toFixed(2) / 2;
                 MapOffset.top = (this.Viewport.Height - parseFloat(MapHeight)).toFixed(2) / 2;
+
+                this.Elements.Map.style.left = MapOffset.left + "px";
+                this.Elements.Map.style.top = MapOffset.top + "px";
             } else {
                 if(parseFloat(MapHeight) < this.Viewport.Height) {
                     MapOffset.top = (this.Viewport.Height - parseFloat(MapHeight)).toFixed(2) / 2;
+
+                    this.Elements.Map.style.top = MapOffset.top + "px";
                 }
             }
+
+            
         } else {
             if(parseFloat(MapHeight) <= this.Viewport.Height) {
                 MapOffset.left = (this.Viewport.Width - parseFloat(MapWidth)).toFixed(2) / 2;
                 MapOffset.top = (this.Viewport.Height - parseFloat(MapHeight)).toFixed(2) / 2;
+
+                this.Elements.Map.style.left = MapOffset.left + "px";
+                this.Elements.Map.style.top = MapOffset.top + "px";
             } else {
                 if(parseFloat(MapWidth) < this.Viewport.Width) {
                     MapOffset.left = (this.Viewport.Width - parseFloat(MapWidth)).toFixed(2) / 2;
+
+                    this.Elements.Map.style.top = MapOffset.top + "px";
                 }
             }
         }
@@ -187,8 +199,6 @@ class InteractiveMap {
         }
 
         this.Elements.Map.style.backgroundSize = MapBgStyle;
-        this.Elements.Map.style.left = MapOffset.left + "px";
-        this.Elements.Map.style.top = MapOffset.top + "px";
         this.Elements.Map.style.width = MapWidth;
         this.Elements.Map.style.height = MapHeight;
 
@@ -385,6 +395,11 @@ class InteractiveMap {
             bottom: (this.Elements.Map.offsetHeight - this.Viewport.Height) * -1,
             left: 0
         }
+        
+        var animation = {
+            iterations: 1,
+            duration: 250
+        }
 
         let self = this;
 
@@ -398,15 +413,39 @@ class InteractiveMap {
             this.Pan.Horizontal.isEnabled = false;
 
             if(this.Elements.Map.offsetLeft < this.Pan.Boundaries.right) {
-                this.Elements.Map.css({
+                var keyframes = Array(
+                    {
+                        left: this.Elements.Map.offsetLeft + "px"
+                    }, 
+                    {
+                        left: this.Pan.Boundaries.right + "px"
+                    }
+                );
+                var callback = {
                     left: this.Pan.Boundaries.right + "px"
-                });
+                }
             }
             if(this.Elements.Map.offsetLeft > this.Pan.Boundaries.left) {
-                this.Elements.Map.css({
+                var keyframes = Array(
+                    {
+                        left: this.Elements.Map.offsetLeft + "px"
+                    },
+                    {
+                        left: this.Pan.Boundaries.left + "px"
+                    }
+                );
+                var callback = {
                     left: this.Pan.Boundaries.left + "px"
-                });
-            }
+                }
+            }  
+
+            this.Elements.Map.Animation(
+                keyframes,
+                animation,
+                function(){
+                    self.Elements.Map.css(callback)
+                }
+            );
 
             this.Pan.Horizontal.isEnabled = true;
         }
@@ -421,50 +460,70 @@ class InteractiveMap {
             this.Pan.Vertical.isEnabled = false;
 
             if(this.Elements.Map.offsetTop < this.Pan.Boundaries.bottom) {
-                this.Elements.Map.css({
+                var keyframes = Array(
+                    {
+                        top: this.Elements.Map.offsetTop + "px"
+                    },
+                    {
+                        top: this.Pan.Boundaries.bottom + "px"
+                    }
+                );
+                var callback = {
                     top: this.Pan.Boundaries.bottom + "px"
-                });
+                }
             }
             if(this.Elements.Map.offsetTop > this.Pan.Boundaries.top) {
-                this.Elements.Map.css({
+                var keyframes = Array(
+                    {
+                        top: this.Elements.Map.offsetTop + "px"
+                    },
+                    {
+                        top: this.Pan.Boundaries.top + "px"
+                    }
+                );
+                var callback = {
                     top: this.Pan.Boundaries.top + "px"
-                });
+                }
             }
+
+            this.Elements.Map.Animation(
+                keyframes,
+                animation,
+                function(){
+                    self.Elements.Map.css(callback)
+                }
+            );
 
             this.Pan.Vertical.isEnabled = true;
         }
     }
     MoveToLocation(m) {
+
         if(this.Markers.hasOwnProperty(m.groupId) && this.Markers[m.groupId].items.hasOwnProperty(m.itemId)){
             this.Zoom.Zoom = this.Zoom.Maximum;
             this.Render();
 
             let Item = this.Markers[m.groupId].items[m.itemId];
 
-            return {
+            let pointOffset = {
                 h: Math.abs(Item.position.x - this.Map.Longitude.Start) / Map.Map.StepSize.hor.coords * Map.Map.StepSize.hor.px * this.Zoom.Zoom * (-1),
                 v: Math.abs(Item.position.y - this.Map.Latitude.Start) / Map.Map.StepSize.ver.coords * Map.Map.StepSize.ver.px * this.Zoom.Zoom * (-1)
             };
+            let viewportOffset = {
+                h: this.Viewport.Width / 2 - Item.Element.offsetWidth / 2,
+                v: this.Viewport.Height / 2 - Item.Element.offsetHeight / 2
+            }
+            let calculatedOffset = {
+                h: pointOffset.h + viewportOffset.h,
+                v: pointOffset.v + viewportOffset.v
+            }
+
+            this.Pan.IsPreset = true;
 
             this.Elements.Map.css({
                 left: calculatedOffset.h + "px",
                 top: calculatedOffset.v + "px"
             });
-
-            /*
-            let requiredViewportOffset = {
-                h: this.Viewport.Width / 2 - Item.Element.offsetWidth / 2,
-                v: this.Viewport.Height / 2 - Item.Element.offsetHeight / 2
-            }
-            let pointOffset = {
-                h: Item.Element.offsetLeft,
-                v: Item.Element.offsetTop
-            }
-            console.log({
-                left: (pointOffset.h * (-1) + requiredViewportOffset.h) + "px",
-                top: (pointOffset.v * (-1) + requiredViewportOffset.v) + "px"
-            });
-            */
 
             return this.Render();
         } else {
