@@ -145,16 +145,13 @@ class InteractiveMap {
         }
 
         if(this.Viewport.Orientation == 'horizontal') {
-            var MapBgStyle = '100% auto';
-
             var MapHeight = (this.Viewport.Height * this.Zoom.Zoom) + "px";
             var MapWidth = (this.Viewport.Height / this.Map.AspectRatio  * this.Zoom.Zoom).toFixed(2) + "px";
         } else {
-            var MapBgStyle = 'auto 100%';
-
             var MapWidth = (this.Viewport.Width * this.Zoom.Zoom) + "px";
             var MapHeight = (this.Viewport.Width * this.Map.AspectRatio * this.Zoom.Zoom).toFixed(2) + "px";
         }
+        var MapBgStyle = this.Map.Orientation == 'horizontal' ? '100% auto' : 'auto 100%';
 
         // Dragging is enabled by default
         this.Pan.Horizontal.isEnabled = true
