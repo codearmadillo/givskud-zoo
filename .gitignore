@@ -1,5 +1,5 @@
 /node_modules/
-/dest/
+dest/
 /production/
 package-lock.json
 package.json

@@ -1,0 +1,57 @@
+/*
+// This file contains only the scss that is relevant to Events page
+// (event.html)
+*/
+
+.event-box {
+    display: grid;
+    grid-column-gap: 10px;
+    grid-row-gap: 5px;
+    padding: 5px;
+    min-height: 150px;
+    max-width: 450px;
+    min-width: 300px;
+    @include boxShadow(1px solid rgba(0, 0, 0, 0.2));
+
+    .event-image-container {
+        grid-column: 1 / 2;
+
+        img {
+            height: 100px;
+            width: 150px;
+        }
+    }
+            
+    .event-text-container {
+        grid-column: 2 / 4;
+    }
+
+    .event-infoPoints-container {
+        display: flex;
+        justify-content: space-around;
+        grid-row: 2;
+        grid-column: 1 / 2;
+
+        .time-container, .price-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    .event-button-container {
+        grid-row: 2;
+        grid-column: 3 / 4;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        .findMapButton {
+            @include button($lightGreen);
+            @include boxShadow(none);
+        }
+    }
+}
+
+

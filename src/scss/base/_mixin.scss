@@ -1,0 +1,36 @@
+@mixin background($background) {
+    background: $background;
+    min-height: calc(100% - 60px); // Minus height of nav
+    background-size: cover;
+    background-position: center center;
+    top: 0;
+}
+
+
+@mixin boxShadow($border) {
+    border: $border;
+    -webkit-box-shadow: 5px 5px 5px 1px rgba(0,0,0,0.25);
+    -moz-box-shadow: 5px 5px 5px 1px rgba(0,0,0,0.25);
+    box-shadow: 5px 5px 5px 1px rgba(0,0,0,0.25);
+}
+
+
+@mixin button($bgcolor) {
+    background-color: $bgcolor;
+    width: 120px;
+    height: 40px;
+    color: #ffffff;
+}
+
+
+@mixin fpArticle($grid-row) {
+    grid-row: $grid-row;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    max-width: 450px;
+    padding: 5px 10px 0px 10px;
+}
+

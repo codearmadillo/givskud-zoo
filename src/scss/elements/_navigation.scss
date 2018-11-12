@@ -1,0 +1,68 @@
+/*
+// This file contains only the scss that is relevant to the navigation
+// (implemented on all pages except: playgame.html & finishedgame.html)
+*/
+
+.nav {
+    position: fixed;
+    bottom: 0; left: 0;
+    width: 100%;
+    height: 60px;
+    min-width: 320px;
+    background-color: $lightGreen;
+    z-index: 99;
+    overflow: hidden;
+    
+    .nav-list {
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        list-style: none;
+
+        margin: 0;
+        padding: 0;
+
+        .active {
+            background-color:$lightGreenDarken;
+            color: $white !important;
+        }
+
+        .nav-item {
+            display: flex;
+            flex: 1;
+            padding: 5px 0;
+            justify-content: center;
+            align-items: center;
+
+            &:hover {
+                background-color: $lightGreenDarken;
+            }
+
+            .nav-link {
+                text-decoration: none;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                color: rgba(255, 255, 255, 0.7);
+
+                &:hover {
+                    color: rgba(255, 255, 255, 1);
+                }
+
+                .icon {
+                    font-size: 1.5em;
+
+                }
+
+                .nav-title {
+                    font-size: 0.8em;
+                    white-space: nowrap;
+
+                    @media (max-width: 360px) {
+                        font-size: 0.5em;
+                    }
+                }
+            }        
+        }  
+    }
+}

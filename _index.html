@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css" integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="dest/default.css?v=1">
+        <title>Givskud Frontend - Front page</title>
+    </head>
+    <body>
+        <div class="frontpage-layout-container">
+            <!-- Full page bg image with logo and arrow to the section below -->
+            <section class="frontpage-start-screen content-gridRow-container">
+                <div class="fp-overlay"></div>
+                <img class="logo" 
+                    srcset="assets/images/logo-185w.png 185w,
+                            assets/images/logo-245.png 245w,
+                            assets/images/logo-370w.png 370w,
+                            assets/images/logo-450w.png 450w"
+                    sizes="(min-width: 1px) and (max-width: 319px) 185px,   
+                        (min-width: 320px) and (max-width: 479px) 245px,
+                        (min-width: 480px) and (max-width: 639px) 370px,
+                            450px" 
+                    src="assets/images/logo-185w.png" alt="Givskud Zoo Logo">
+                <a id="scroll-arrow" href="#fp-section"><i class="fas fa-angle-double-down"></i></a>
+            </section>
+
+            <!-- "Second page" on the front page with information about possibilities in the app -->
+            <section class="article-container" id="fp-section">
+
+                <article class="eventMap-article">
+                    <h2>Make sure you see it all</h2>
+                    <p>Sometimes it is hard to know what to see and how to find it, but in our new app you can easily find information about current events and find them on our map of the park.</p>
+                    <div class="img-link-container">
+                        <div class="img-link">
+                            <a href="_event.html"></a>
+                            <div class="image-overlay">
+                                <p>Events</p>
+                            </div>
+                            <img
+                                srcset="assets/images/eventImgSmall.jpg 100w,
+                                        assets/images/eventImgMedium.jpg 200w,
+                                        assets/images/eventImgLarge.jpg 300w"
+                                sizes="(min-width: 1px) and (max-width: 479px) 150px,   
+                                        (min-width: 480px) and (max-width: 799px) 200px,
+                                        200px" 
+                                src="assets/images/eventImgSmall.jpg" alt="Zookeeper with odder">
+                        </div>
+
+                        <div class="img-link">
+                                <a href="_map.html"></a>
+                                <div class="image-overlay">
+                                    <p>Park Map</p>
+                                </div>
+                                <img 
+                                srcset="assets/images/mapImgSmall.jpg 100w,
+                                        assets/images/mapImgMedium.jpg 200w,
+                                        assets/images/mapImgLarge.jpg 300w"
+                                sizes="(min-width: 1px) and (max-width: 479px) 150px,   
+                                        (min-width: 480px) and (max-width: 799px) 200px,
+                                        200px" 
+                                src="assets/images/mapImgSmall.jpg" alt="Park map image">
+                        </div>
+                    </div>   
+                </article>
+
+                <article class="feed-article">
+                    <h2>We will let you know</h2>
+                    <p>Our staff will continuously provide you with updates on what is going on during the day.</p>
+                    <div class="img-link-container">
+                        <div class="img-link">
+                            <a href="_news.html"></a>
+                            <div class="image-overlay">
+                                <p>Newsfeed</p>
+                            </div>
+                            <img srcset="assets/images/newsImgSmall.jpg 100w,
+                                    assets/images/newsImgMedium.jpg 200w,
+                                    assets/images/newsImgLarge.jpg 300w"
+                                sizes="(min-width: 1px) and (max-width: 479px) 150px,   
+                                    (min-width: 480px) and (max-width: 799px) 200px,
+                                    200px" 
+                                src="assets/images/newsImgSmall.jpg" alt="Zookeeper with lion">
+                        </div>
+                    </div>
+                </article>
+
+                <article class="game-article">
+                    <h2>Learn while having fun</h2>
+                    <p>Test your knowledge about the animals in our new Zoo Games.</p>
+                    <div class="img-link-container">
+                        <div class="img-link">
+                            <a href="_games.html"></a>
+                            <div class="image-overlay">
+                                <p>Zoo Games</p>
+                            </div>
+                            <img srcset="assets/images/gameImgSmall.jpg 100w,
+                                        assets/images/gameImgMedium.jpg 200w,
+                                        assets/images/gameImgLarge.jpg 300w"
+                                sizes="(min-width: 1px) and (max-width: 479px) 150px,   
+                                        (min-width: 480px) and (max-width: 799px) 200px,
+                                        200px" 
+                                src="assets/images/gameImgSmall.jpg" alt="Children Playing">
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </div>
+
+        <nav class="nav">
+            <ul class="nav-list">
+                <li class="nav-item active"><a class="nav-link active" href="_index.html"><i class="icon fas fa-home"></i><span class="nav-title">Home</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="_news.html"><i class="icon far fa-newspaper"></i><span class="nav-title">Newsfeed</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="_map.html"><i class="icon fas fa-map-marked-alt"></i><span class="nav-title">Park Map</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="_event.html"><i class="icon far fa-calendar-alt"></i><span class="nav-title">Events</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="_games.html"><i class="icon fas fa-gamepad"></i><span class="nav-title">Zoo Games</span></a></li>
+            </ul>
+        </nav>
+
+        <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous">
+        </script>
+        <script src="dest/scripts.js"></script>
+        <script src="dest/application.js"></script>
+    </body>
+</html>

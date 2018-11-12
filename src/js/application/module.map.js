@@ -118,12 +118,12 @@ class InteractiveMap {
             var MElement = document.createElement('div');
                 MElement.className = 'iamap-maplayer';
 
-                MElement.css({
-                    position: "relative",
-                    backgroundImage: "url('" + this.Map.Source + "')",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center center",
-                    zIndex: 50
+                MElement.Styles({
+                    "position": "relative",
+                    "background-image": "url('" + this.Map.Source + "')",
+                    "background-repeat": "no-repeat",
+                    "background-position": "center center",
+                    "z-index": 50
                 });
 
             this.Elements.Map = MElement;
@@ -450,7 +450,7 @@ class InteractiveMap {
                 keyframes,
                 animation,
                 function(){
-                    self.Elements.Map.css(callback)
+                    self.Elements.Map.Styles(callback)
                 }
             );
 
@@ -497,7 +497,7 @@ class InteractiveMap {
                 keyframes,
                 animation,
                 function(){
-                    self.Elements.Map.css(callback)
+                    self.Elements.Map.Styles(callback)
                 }
             );
 
@@ -536,9 +536,9 @@ class InteractiveMap {
                 calculatedOffset.v = this.Pan.Boundaries.bottom;
             }
 
-            this.Elements.Map.css({
-                left: calculatedOffset.h + "px",
-                top: calculatedOffset.v + "px"
+            this.Elements.Map.Styles({
+                "left": calculatedOffset.h + "px",
+                "top": calculatedOffset.v + "px"
             });
 
             this.HighlightMarker(Item.id, Item.group.id);
@@ -678,26 +678,26 @@ class InteractiveMap {
             ControllersElement.Properties({
                 className: 'iamap-controllerslayer'
             });
-            ControllersElement.css({
-                position: 'absolute',
-                bottom: "15px",
-                right: "15px",
-                zIndex: 100,
-                textAlign: 'right'
+            ControllersElement.Styles({
+                "position": 'absolute',
+                "bottom": "15px",
+                "right": "15px",
+                "z-index": 100,
+                "text-align": 'right'
             });
         this.Elements.Controllers.Parent = ControllersElement;
         this.Elements.Parent.appendChild(this.Elements.Controllers.Parent);
 
         // Location controller
         var LocationController = document.createElement('span');
-            LocationController.css({
-                position: 'relative',
-                display: 'inline-block',
-                width: '32px',
-                height: '32px',
-                backgroundSize: '32px 32px',
-                backgroundImage: 'url("assets/map.icon.location.svg")',
-                marginRight: "32px"
+            LocationController.Styles({
+                "position": 'relative',
+                "display": 'inline-block',
+                "width": '32px',
+                "height": '32px',
+                "background-size": '32px 32px',
+                "background-image": 'url("assets/map.icon.location.svg")',
+                "margin-right": "32px"
             });
             LocationController.addEventListener('click', function(e){
                 e.preventDefault();
@@ -709,13 +709,13 @@ class InteractiveMap {
 
         // Zoom controllers
         var ZoomInController = document.createElement('span');
-            ZoomInController.css({
-                position: 'relative',
-                display: 'inline-block',
-                width: '32px',
-                height: '32px',
-                backgroundSize: '32px 32px',
-                backgroundImage: 'url("assets/map.icon.zoom-in.svg")'
+            ZoomInController.Styles({
+                "position": 'relative',
+                "display": 'inline-block',
+                "width": '32px',
+                "height": '32px',
+                "background-size": '32px 32px',
+                "background-image": 'url("assets/map.icon.zoom-in.svg")'
             });
             ZoomInController.addEventListener('click', function(e){
                 e.preventDefault();
@@ -725,14 +725,14 @@ class InteractiveMap {
         this.Elements.Controllers.Parent.appendChild(this.Elements.Controllers.ZoomIn);
 
         var ZoomOutController = document.createElement('span');
-            ZoomOutController.css({
-                position: 'relative',
-                display: 'inline-block',
-                width: '32px',
-                height: '32px',
-                backgroundSize: '32px 32px',
-                backgroundImage: 'url("assets/map.icon.zoom-out.svg")',
-                marginLeft: "6px"
+            ZoomOutController.Styles({
+                "position": 'relative',
+                "display": 'inline-block',
+                "width": '32px',
+                "height": '32px',
+                "background-size": '32px 32px',
+                "background-image": 'url("assets/map.icon.zoom-out.svg")',
+                "margin-left": "6px"
             });
             ZoomOutController.addEventListener('click', function(e){
                 e.preventDefault();

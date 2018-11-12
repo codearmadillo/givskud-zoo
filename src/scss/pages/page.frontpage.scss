@@ -1,0 +1,111 @@
+.frontpage-layout-container {
+    height: calc(100% - 60px); // Minus height of nav + header + paddings
+    overflow-y: auto;
+    background-color: $white;
+
+    .frontpage-start-screen {
+        position: relative;
+        display: grid;
+        justify-items: center;
+        grid-template-rows: repeat(7, 1fr);
+        @include background($bgImgHeaderSmall);
+    
+        @media (min-width: 480px) {
+            @include background($bgImgHeaderMedium);
+        }
+    
+        @media (min-width: 600px) {
+            @include background($bgImgHeaderLarge);
+        }
+
+        .fp-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                opacity: 0.75;
+                background-color: $darkGrey;
+        }
+
+        .logo {
+            grid-row: 3;
+            z-index: 1;
+        }
+
+        #scroll-arrow {
+            grid-row: 8;
+            font-size: 2.5em;
+            color: $white;
+            z-index: 1;
+        }
+    }
+
+    .article-container {
+        height: 100%;
+        margin: auto;
+        display: grid;
+        grid-gap: 10px;
+        justify-content: center;
+    }
+
+    .eventMap-article {
+        @include fpArticle(1 / 5);
+    }
+
+    .feed-article {
+        @include fpArticle(5 / 8);
+    }
+
+    .game-article {
+        @include fpArticle(8 / 12);
+    }
+
+    .img-link-container {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-content: center;
+        align-items: center;
+        justify-content: space-around;
+        padding: 10px 0px 10px 0px;
+
+        .img-link {
+            position: relative;
+
+            img {
+                width: 150px;
+                height: 75px;
+
+                @media (min-width: 480px) {
+                    width: 200px;
+                    height: 100px;
+                }
+            }
+            
+            .image-overlay {
+                position: absolute;
+                color: $white;
+                background: $purple;
+                width: 100%;
+                bottom: 0;
+                left: 0;
+                padding: 0;
+                text-align: center;
+                z-index:1;
+                padding: 10px 0 10px 0;
+            } 
+
+            a {
+                position:absolute;
+                color: $white;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                padding: 0;
+                z-index:2;
+            }
+        }
+    }
+}

@@ -1,4 +1,19 @@
-@import 'base/type';
-@import 'base/grid';
+body, html {
+    margin: 0;
+    padding-bottom: 65px;
+}
+
+@import 'base/_vars.scss';
+@import 'base/_mixin.scss';
+
+@import 'base/_type.scss';
+@import 'base/_grid.scss';
 
 @import 'elements/_map.scss';
+@import 'elements/_navigation.scss';
+
+@import 'pages/page.frontpage.scss';
+@import 'pages/page.events.scss';
+@import 'pages/page.games.scss';
+@import 'pages/page.map.scss';
+@import 'pages/page.news.scss';

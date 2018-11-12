@@ -1,0 +1,148 @@
+/*
+// This file contains only the scss that is relevant to the Park Map page
+// (map.html)
+*/
+
+.mapSection-layout-container {
+    height: calc(100% - 120px); // Minus height of nav + header
+    background-color: $lightGrey;
+
+    .map-container {
+        height: 100%;
+        width: 100%;
+        overflow: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sidebarFilterContainer {
+        position: absolute;
+        display: grid;
+        grid-row-gap: 15px;
+        padding: 10px 0px 10px 0px;
+        width: 250px;
+        left: -250px;
+        height: calc(100% - 140px);
+        background-color: $darkGrey;
+        transition: 0.7s;
+
+        .filter-introText {
+            grid-row: 1 / 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            color: $white;
+            padding: 0px 10px 5px 10px;
+
+            .sidebar-header {
+                margin-bottom: 10px;
+            }
+        }
+
+        .filter-options-container {
+            grid-row: 2 / 8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0px 20px 0px 20px;
+            color: $white;
+
+            .option {
+                width: 100%;
+                margin: 15px 0px 15px 0px;
+                display: flex;
+                justify-content: space-between;
+
+                .switch { // Container for slider
+                    position: relative;
+                    display: inline-block;
+                    width: 60px;
+                    height: 29px;
+                
+                    .switch-input { // Hide default checkbox
+                        opacity: 0;
+                        width: 0;
+                        height: 0;
+                    }
+                
+                    .slider { // The outline of the slider
+                        position: absolute;
+                        cursor: pointer;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        border-radius: 34px;
+                        border-style: solid;
+                        border-color: $red;
+                        background-color: inherit;
+                        -webkit-transition: .4s;
+                        transition: .4s;
+                
+                        &:before { // The circle within the toggle slider
+                            position: absolute;
+                            content: "";
+                            height: 20px;
+                            width: 20px;
+                            left: 3px;
+                            bottom: 2px;
+                            border-radius: 50%;
+                            background-color: $red;
+                            -webkit-transition: .4s;
+                            transition: .4s;
+                        }
+                    }
+                
+                    input:checked + .slider { // If input checked, change border-color of slider outline
+                        border-color: $lightGreen;
+                    }
+                
+                    input:checked + .slider:before { // If input checked, change color of circle within slider & move to the right
+                        background-color: $lightGreen;
+                        -webkit-transform: translateX(29px);
+                        -ms-transform: translateX(29px);
+                        transform: translateX(29px);
+                    }
+                }
+            }
+        }
+
+        .filterBtn {
+            position: absolute;
+            height: 100px;
+            width: 50px;
+            right: -50px; // To fix it at the end of the sidebarFilter it needs to be minus the width of the button
+            top: calc(50% - 50px); // minus half height of button
+            border-top-right-radius: 100px;
+            border-bottom-right-radius: 100px;
+            background-color: $darkGrey;
+            border: none;
+            color: $white;
+            font-size: 3em;
+
+            &:hover {
+                cursor: pointer;
+            }
+
+            &:focus {
+                outline: 0; // To prevent blue outline when click the button
+            }
+
+            .btnIcon {
+                transition: .5s;
+            }
+        }
+    }
+    
+    .btn-is-active { // Rotate Icon in button when sidebar is open, to indicate that its closeable
+        -webkit-transform: rotate(180deg);
+        transform: rotate(180deg);
+    }
+    .sidebar-is-open { // Move sidebar 250px to the right (same px as the sidebar width)
+        -webkit-transform: translate(250px);
+        transform: translate(250px);
+    }
+}
+
