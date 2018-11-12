@@ -80,7 +80,7 @@ class InteractiveMap {
     Load() {
         var self = this;
 
-        this.Elements.Parent.className = 'iamap';
+        this.Elements.Parent.className = this.Elements.Parent.className + ' iamap';
 
         this.Elements.Loader = this.Loader();
         this.Elements.Parent.appendChild(this.Elements.Loader);

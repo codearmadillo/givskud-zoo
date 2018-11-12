@@ -5,5 +5,5 @@ Element.prototype.Styles = function(f){
         }
     }
     
-    return true;
+    return this;
 }

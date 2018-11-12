@@ -8,12 +8,12 @@
     background-color: $lightGrey;
 
     .map-container {
-        height: 100%;
-        width: 100%;
-        overflow: auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        display: block;
+        position: fixed;
+        top: 57px;
+        width: 100%; height: calc(100% - 60px - 57px);
+        background-color: $mapBackgroundColor;
+        overflow: hidden;
     }
 
     .sidebarFilterContainer {

@@ -9,7 +9,7 @@
         <title>Givskud Frontend - Park Map page</title>
     </head>
     <body>
-        <header class="header">
+        <header class="page-header">
             <h1>Park Map</h1>
         </header>
 
@@ -73,9 +73,7 @@
                 </div>
             </aside>
 
-
-            <div class="map-container">
-                <h2>THE MAP GOES HERE</h2>
+            <div class="map-container" id="page-map">
             </div>
 
         </section>
@@ -97,5 +95,28 @@
         </script>
         <script src="dest/scripts.js"></script>
         <script src="dest/application.js"></script>
+        <script type="text/javascript">
+            var MapConfig = {
+                Map: "assets/map.first-run.svg",
+                UsesRealWorld: true,
+                Longitude: {
+                    Start: 9.34326,
+                    End: 9.35944
+                },
+                Latitude: {
+                    Start: 55.81296,
+                    End: 55.80235
+                }
+            }
+            var Config = {
+                Position: {
+                    x: 10,
+                    y: 10
+                },
+                Zoom: 1
+            }
+
+            var MapObject = new InteractiveMap(document.getElementById('page-map'), MapConfig, Config);
+        </script>
     </body>
 </html>
