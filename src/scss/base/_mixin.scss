@@ -34,3 +34,34 @@
     padding: 5px 10px 0px 10px;
 }
 
+// Breakpoint mixins
+@mixin breakpoint($rule){
+    @if $rule == 'tablet' {
+        @media (min-width: $break_tablet) { @content ; }
+    }
+    @else if $rule == 'desktop' {
+        @media (min-width: $break_desktop) { @content ; }
+    }
+}
+
+// Grid mixin
+@mixin grid($column-count, $prefix){
+    @for $i from 1 through $column-count {
+        .col-#{$prefix}-#{$i} {
+            position: relative;
+            display: initial;
+            width: $i * (100% / $column-count);
+            min-width: $i * (100% / $column-count);
+            max-width: $i * (100% / $column-count);
+            margin-left: 0;
+        }
+    }
+    .#{$prefix}-hidden {
+        display: none;
+    }
+    @for $i from 1 through $column-count {
+        .offset-#{$prefix}-#{$i} {
+            margin-left: $i * (100% / $column-count);
+        }
+    }
+}

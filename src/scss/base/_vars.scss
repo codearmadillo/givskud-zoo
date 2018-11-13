@@ -21,3 +21,14 @@ $mapBackgroundColor: #fff;
 $fontPrimary: serif;
 $fontSecondary: sans-serif;
 $fontHeadlines: sans-serif;
+
+// Breakpoints
+$break_tablet: 768px;
+$break_desktop: 1250px;
+
+// Layout
+$grid-column-gutter: (
+    small: 8px,
+    medium: 12px,
+    large: 16px
+);
