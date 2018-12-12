@@ -19,5 +19,8 @@ namespace PageComponents {
             return Response;
             
         }
+        public static string Popup(string message, string link, string linkLabel) {
+            return string.Empty;
+        }
     }
 }

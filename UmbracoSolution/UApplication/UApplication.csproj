@@ -256,6 +256,9 @@
     <Content Include="App_Plugins\ModelsBuilder\modelsbuilder.htm" />
     <Content Include="App_Plugins\ModelsBuilder\modelsbuilder.resource.js" />
     <Content Include="Assets\images\map.first-run.svg" />
+    <Content Include="Assets\images\map.icon.location.svg" />
+    <Content Include="Assets\images\map.icon.zoom-in.svg" />
+    <Content Include="Assets\images\map.icon.zoom-out.svg" />
     <Content Include="Assets\stylesheets\new.default.css" />
     <Content Include="Assets\scripts\application.js" />
     <Content Include="Assets\scripts\scripts.js" />
@@ -286,7 +289,7 @@
   <ItemGroup>
     <Content Include="App_Code\PostController.cs" />
     <Content Include="App_Code\PageComponents.cs" />
-    <Content Include="App_Code\GameController.cs" />
+    <Content Include="App_Code\Services.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

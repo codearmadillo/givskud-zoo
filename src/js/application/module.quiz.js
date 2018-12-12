@@ -1,0 +1,5 @@
+var QuizModule = {
+    Init: function(){
+        
+    }
+}
