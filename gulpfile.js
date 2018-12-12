@@ -75,7 +75,7 @@ gulp.task('application', function(){
         .pipe(gutil.env.type !== 'production' ? sourcemaps.write() : gutil.noop())
         .pipe(gutil.env.type !== 'production' ? gulp.dest(output.application) : gulp.dest(deploy.application));
 });
-gulp.task('watch', ['scripts', 'stylesheet', 'application', 'new'], function(){
+gulp.task('watch', ['scripts', 'stylesheet', 'application'], function(){
     gulp.watch(watch.javascript, ['scripts']);
     gulp.watch(watch.stylesheet, ['stylesheet']);
     gulp.watch(watch.application, ['application']);

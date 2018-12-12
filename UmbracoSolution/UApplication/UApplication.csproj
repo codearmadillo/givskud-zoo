@@ -256,9 +256,6 @@
     <Content Include="App_Plugins\ModelsBuilder\modelsbuilder.htm" />
     <Content Include="App_Plugins\ModelsBuilder\modelsbuilder.resource.js" />
     <Content Include="Assets\images\map.first-run.svg" />
-    <Content Include="Assets\images\map.icon.location.svg" />
-    <Content Include="Assets\images\map.icon.zoom-in.svg" />
-    <Content Include="Assets\images\map.icon.zoom-out.svg" />
     <Content Include="Assets\stylesheets\new.default.css" />
     <Content Include="Assets\scripts\application.js" />
     <Content Include="Assets\scripts\scripts.js" />
@@ -289,7 +286,7 @@
   <ItemGroup>
     <Content Include="App_Code\PostController.cs" />
     <Content Include="App_Code\PageComponents.cs" />
-    <Content Include="App_Code\Services.cs" />
+    <Content Include="App_Code\GameController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -351,7 +348,12 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\UApi\UApi.csproj">
+      <Project>{087dc55f-5b2d-48b8-83ef-f655cf4cd452}</Project>
+      <Name>UApi</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

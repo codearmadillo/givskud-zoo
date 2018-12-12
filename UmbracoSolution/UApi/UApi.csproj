@@ -209,6 +209,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\EventController.cs" />
+    <Compile Include="Controllers\NewsController.cs" />
+    <Compile Include="Models\ContentModel.cs" />
+    <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\News.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
