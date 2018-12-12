@@ -110,3 +110,6 @@ _[Ss]cripts
 
 # Ignore all locked files
 *.lock*
+
+# Ignore Environments
+**/.vs

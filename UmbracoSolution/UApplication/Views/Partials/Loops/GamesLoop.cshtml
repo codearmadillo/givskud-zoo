@@ -1,0 +1,45 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using PostController;
+
+<header>
+    <h2>Zoo Games</h2>
+</header>
+
+<main>
+    <section class="flexrow flexrow--gutters">
+       
+    @{
+        var Nodes = Model.Content.Children().Where(x => x.IsVisible());
+
+        if(Nodes.Count() > 0) {
+            foreach(var Page in Nodes) {
+                string CoverImageUrl = string.Empty;
+                if(Page.HasValue("image")) {
+                    CoverImageUrl = Page.GetPropertyValue<IPublishedContent>("image").Url;
+                } else {
+                    CoverImageUrl = ContentHelper.GetDefaultPostImage();
+                }
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <article class="flexrow post post--games">
+                        <div class="col-xs-6 game__image">
+                            <span class="imageholder">
+                                <img src="@CoverImageUrl" title='@Page.GetPropertyValue("title")' alt='@Page.GetPropertyValue("title")'/>
+                            </span>
+                        </div>
+                        <div class="col-xs-6 game__description">
+                            <h3>@Page.GetPropertyValue("title")</h3>
+                            <p>@Page.GetPropertyValue("description")</p>
+                        </div>
+                        <div class="col-xs-12 game__controls">
+                            <a href="@Page.Url" class="btn btn--default" title="Play game">Play game</a>
+                        </div>
+                    </article>
+                </div>
+            }
+        } else {
+            @Html.Partial("Misc/NoContent");
+        }
+    }
+
+    </section>
+</main>

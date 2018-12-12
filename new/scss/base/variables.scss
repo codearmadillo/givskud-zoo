@@ -1,0 +1,32 @@
+$grid-columns: 12;
+$grid-gutter: 6px;
+
+/*
+
+XS < 768px
+SM > 768px
+MD > 992px
+LG > 1200px
+
+*/
+
+
+/* Colour set */
+
+$page-bg: #F6F6F6;
+
+$navigation-item-bg: #97BE0D;
+$navigation-item-bg-active: #86A519;
+$navigation-item-color: #FFF;
+
+$header-bg: #5B9744;
+$header-color: #FFF;
+
+$button-default-bg: #97BE0D;
+$button-default-bg-active: rgb(132, 165, 12);
+$button-default-color: #FFF;
+
+/* Typography */
+
+$font-primary: 'Lato', sans-serif;
+$font-icons: 'Font Awesome 5 Free';

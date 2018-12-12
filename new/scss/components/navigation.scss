@@ -1,0 +1,47 @@
+nav {
+    display: flex;
+    justify-content: space-between;
+
+    width: 100%;
+
+    a {
+        display: block;
+        flex: 1;
+        padding: 12px 0;
+
+        color: $navigation-item-color;
+        background-color: $navigation-item-bg;
+        transition: 300ms;
+
+        & .link {
+            &__icon,
+            &__title{
+                display: block;
+                float: left;
+                width: 100%;
+                text-align: center;
+            }
+            &__icon {
+                font-size: 24px;
+            }
+            &__title {
+                padding-top: 6px;
+                font-family: $font-primary;
+                font-weight: bold;
+                font-size: 13px;
+            }
+        }
+
+        &.active,
+        &:hover {
+            background-color: $navigation-item-bg-active;
+        }
+    }
+}
+
+nav#main {
+    position: fixed;
+    bottom: 0;
+
+    z-index: 100;
+}

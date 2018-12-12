@@ -1,0 +1,19 @@
+header {
+    display: block;
+    top: 0;
+    width: 100%;
+    padding: 16px 0;
+    background-color: $header-bg;
+    margin-bottom: 12px;
+
+    z-index: 100;
+
+    h2 {
+        margin: 0;
+        color: $header-color;
+        font-family: $font-primary;
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+    }
+}

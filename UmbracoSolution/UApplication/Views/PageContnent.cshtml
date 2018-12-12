@@ -1,0 +1,30 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+	Layout = "Master.cshtml";
+}
+
+@{
+    switch((string)Model.Content.DocumentTypeAlias) {
+        case "pageMap":
+            @Html.Partial("Misc/Map");
+            break;
+        case "pageNews":
+            @Html.Partial("Loops/NewsLoop");
+            break;
+        case "pageHome":
+            @Html.Partial("Misc/Homepage");
+            break;
+        case "pageGames":
+            @Html.Partial("Loops/GamesLoop");
+            break;
+        case "pageEvents":
+            @Html.Partial("Loops/EventsLoop");
+            break;
+        case "itemGames":
+            @Html.Partial("Misc/Quiz");
+            break;
+        default:
+            @Html.Partial("Misc/404");
+            break;
+    }
+}

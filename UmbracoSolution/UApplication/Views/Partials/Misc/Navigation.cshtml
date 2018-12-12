@@ -1,0 +1,18 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using PageComponents;
+
+
+@{
+    var Homepage = Model.Content.AncestorOrSelf("pageHome");
+}
+
+
+<nav id="main">
+
+    @Html.Raw(Templates.Navigation(@Homepage.Url, @Homepage.GetPropertyValue("navigationLabel").ToString(), @Homepage.GetPropertyValue("icon").ToString(), Model.Content.Id == Homepage.Id))
+
+    @foreach(var Item in Homepage.Children){
+        @Html.Raw(Templates.Navigation(@Item.Url, @Item.GetPropertyValue("navigationLabel").ToString(), @Item.GetPropertyValue("icon").ToString(), Model.Content.Id == Item.Id))
+    }
+
+</nav>

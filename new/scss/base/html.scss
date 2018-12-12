@@ -1,0 +1,28 @@
+body, html {
+    margin: 0; padding: 0;
+    background-color: $page-bg;
+    overflow-x: hidden;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+main {
+    float: left;
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 6px 70px;
+
+    @include breakpoint('md') {
+        width: 990px;
+    }
+    @include breakpoint('lg') {
+        width: 1150px;
+    }
+}
+
+a {
+    text-decoration: none;
+}

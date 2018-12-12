@@ -1,0 +1,35 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+	Layout = "Master.cshtml";
+}
+
+@{
+    string Headline = Model.Content.Parent.HasValue("title") ? Model.Content.Parent.GetPropertyValue<string>("title") : Model.Content.Parent.Name;
+    string Author = string.Empty;
+    string Time = string.Empty;
+    string PostHeadline = Model.Content.GetPropertyValue<string>("headline");
+    var PostBody = Model.Content.GetPropertyValue("bodyText");
+}
+
+<header>
+    <h2>
+        @Headline
+    </h2>
+</header>
+
+<main>
+    <section class="news__single">
+        <header>
+            <span class="post__author">
+                @Author
+            </span>
+            <span class="post__time">
+                @Time
+            </span>
+        </header>
+        <main>
+            <h2>@PostHeadline</h2>
+            @PostBody
+        </main>
+    </section>
+</main>

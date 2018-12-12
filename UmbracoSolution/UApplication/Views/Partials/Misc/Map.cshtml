@@ -1,0 +1,34 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+
+<header>
+    <h2>Park Map</h2>
+</header>
+
+<div class="map-container" id="page-map" style="position: fixed; top: 61px; bottom: 70px; width: 100%;">
+
+</div>
+
+<script src="~/Assets/scripts/application.js"></script>
+<script type="text/javascript">
+    var MapConfig = {
+        Map: "/Assets/images/GivskudZoo_Map.svg",
+        UsesRealWorld: true,
+        Longitude: {
+            Start: 9.34326,
+            End: 9.35944
+        },
+        Latitude: {
+            Start: 55.81296,
+            End: 55.80235
+        }
+    }
+    var Config = {
+        Position: {
+            x: 10,
+            y: 10
+        },
+        Zoom: 1
+    }
+
+    var MapObject = new InteractiveMap(document.getElementById('page-map'), MapConfig, Config);
+</script>

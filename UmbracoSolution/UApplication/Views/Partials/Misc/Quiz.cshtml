@@ -1,0 +1,124 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+<style type="text/css">
+    nav#main {
+        display: none !important;
+    }
+</style>
+
+@{
+    if(Request.Cookies["endgame"] == null) {
+        int CurrentQuestion = 0;
+
+        if(Request.Cookies["ingame"] != null && Request.Cookies["ingame"].Value.ToString() == "true"){
+            if(Request.Cookies["question"] != null) {
+                CurrentQuestion = Convert.ToInt32(Request.Cookies["question"].Value.ToString());
+            } else {
+                CurrentQuestion = 0;
+            }
+        } else {
+            CurrentQuestion = 0;
+        }
+
+        int Nth = 0;
+        var Items = Model.GetPropertyValue<IEnumerable<IPublishedContent>>("question");
+        int QuestionsTotal = Items.Count();
+
+        foreach(var Question in Items) {
+            if(CurrentQuestion != Nth) {
+                Nth++;
+                continue;
+            }
+
+            <main class="game">
+                <section class="game__controls">
+                    <i class="fa fa-times"></i>
+                </section>
+                <section class="game__question">
+                    <header>
+                        <span class="imageholder">
+                            <img class="question__image" src="https://www.thoughtco.com/thmb/Bih_3hywEjEC-Fs1gAo-l_ZSPwA=/419x263/filters:fill(auto,1)/stegosaurusWC4-56a2534a3df78cf772747250.jpg" />
+                        </span>
+                        <h3 class="question__text">@Question.GetPropertyValue("question")</h3>
+                        <span class="question__hint">
+                            <button onclick="QuizModule.ShowHint()" class="btn btn--default">Show hint</button>
+                            <span class="hint__content">
+                                @Question.GetPropertyValue("hint")
+                            </span>
+                        </span>
+                    </header>
+                    <main>
+                        <div class="question__item" game-key="1">
+                            <span>A</span>
+                            <span>@Question.GetPropertyValue("answer1")</span>
+                        </div>
+                        <div class="question__item" game-key="2">
+                            <span>B</span>
+                            <span>@Question.GetPropertyValue("answer2")</span>
+                        </div>
+                        <div class="question__item" game-key="3">
+                            <span>C</span>
+                            <span>@Question.GetPropertyValue("answer3")</span>
+                        </div>
+                        <div class="question__item" game-key="4">
+                            <span>D</span>
+                            <span>@Question.GetPropertyValue("answer4")</span>
+                        </div>
+                    </main>
+                </section>
+                <section class="game__counter">
+                    @(Nth+1) of @QuestionsTotal
+                </section>
+            </main>
+
+            <script type="text/javascript">
+                var QuizSettings = {
+                    currentquestion: @CurrentQuestion,
+                    correctanswer: @Question.GetPropertyValue("correctAnswer"),
+                    questionlimit: @QuestionsTotal
+                }
+                QuizModule.Init();
+            </script>
+
+            break;
+        }
+    } else {
+        var Items = Model.GetPropertyValue<IEnumerable<IPublishedContent>>("question");
+        int QuestionsTotal = Items.Count();
+        int Score = Convert.ToInt32(Request.Cookies["score"].Value.ToString());
+
+        int ScorePercentage = (100 / QuestionsTotal) * Score;
+
+        <main class="game game--endgame">
+            <section class="game__message">
+                <h2>Good Job!</h2>
+
+                @if(ScorePercentage > 80) {
+                    <p>You are a master!</p>
+                    <p>You are very clever when it comes to @Model.GetPropertyValue("topic")!</p>
+                } else if (ScorePercentage < 80 && ScorePercentage > 55) {
+                    <p>Your score is great!</p>
+                    <p>Your knowledge about @Model.GetPropertyValue("topic") is very good.</p>
+                } else if (ScorePercentage < 55 && ScorePercentage > 30) {
+                    <p>That is not bad!</p>
+                    <p>Your knowledge about @Model.GetPropertyValue("topic") could use some exercise.</p>
+                } else {
+                    <p>Don't you worry, you will do better next time!</p>
+                    <p>Run through our park to get to know more about @Model.GetPropertyValue("topic")!</p>
+                }
+
+            </section>
+            <section class="game__score">
+                @ScorePercentage%
+            </section>
+            <section class="game__buttons">
+                <button class="js-playagain btn btn--default">Play again</button>
+                <button class="js-leavequiz btn btn--warning">Quit</button>
+            </section>
+        </main>
+
+        <script type="text/javascript">
+            QuizModule.EndGame();
+        </script>
+    }
+}

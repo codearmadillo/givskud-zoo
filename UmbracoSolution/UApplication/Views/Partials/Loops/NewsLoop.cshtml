@@ -1,0 +1,43 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using PostController;
+
+<header>
+    <h2>Newsfeed</h2>
+</header>
+
+
+<main>
+    <section class="flexrow flexrow--gutters">
+
+        @{
+            var Nodes = Model.Content.Children().Where(x => x.IsVisible());
+
+            if(Nodes.Count() > 0) {
+                foreach(var Page in Nodes.OrderBy("UpdateDate desc")) {
+                    <div class="col-xs-12 col-sm-6 col-md-4">
+                        <a href="@Page.Url" title="@Page.GetPropertyValue(" Headline")">
+                            <article class="post--news post">
+                                <div class="post__author">
+                                    <img src="@ContentHelper.AuthorImage(@Page.CreatorId)" alt="Published by @Page.CreatorName" class="author__image" />
+                                    <span class="author__name">@Page.CreatorName</span>
+                                </div>
+                                <div class="post__content">
+                                    <span class="content__excerpt">
+                                        @ContentHelper.GetExcerpt(@Page.GetPropertyValue("bodyText").ToString(), 160)
+                                    </span>
+                                    <span class="content__time">
+                                        @Page.CreateDate.ToString("%d MMM, yyyy")
+                                    </span>
+                                </div>
+                            </article>
+                        </a>
+                    </div>
+                }
+            } else {
+                @Html.Partial("Misc/NoContent");
+            }
+
+        }
+
+    </section>
+</main>

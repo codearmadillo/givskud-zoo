@@ -696,7 +696,7 @@ class InteractiveMap {
                 "width": '32px',
                 "height": '32px',
                 "background-size": '32px 32px',
-                "background-image": 'url("assets/map.icon.location.svg")',
+                "background-image": 'url("/Assets/images/map.icon.location.svg")',
                 "margin-right": "32px"
             });
             LocationController.addEventListener('click', function(e){
@@ -715,7 +715,7 @@ class InteractiveMap {
                 "width": '32px',
                 "height": '32px',
                 "background-size": '32px 32px',
-                "background-image": 'url("assets/map.icon.zoom-in.svg")'
+                "background-image": 'url("/Assets/images/map.icon.zoom-in.svg")'
             });
             ZoomInController.addEventListener('click', function(e){
                 e.preventDefault();
@@ -731,7 +731,7 @@ class InteractiveMap {
                 "width": '32px',
                 "height": '32px',
                 "background-size": '32px 32px',
-                "background-image": 'url("assets/map.icon.zoom-out.svg")',
+                "background-image": 'url("/Assets/images/map.icon.zoom-out.svg")',
                 "margin-left": "6px"
             });
             ZoomOutController.addEventListener('click', function(e){

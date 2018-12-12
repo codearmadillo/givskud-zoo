@@ -1,0 +1,86 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using PostController;
+
+<section class="frontpage__placeholder">
+    <span class="logo">
+        <img src="https://dokodoc.com/assets/img/dokodoc_logo.png" alt="Logo" />
+    </span>
+    <span class="controls">
+        <i class="fa fa-angle-double-down"></i>
+    </span>
+</section>
+
+
+<main>
+    <section class="flexgrid">
+        @{
+            var Items = Model.GetPropertyValue<IEnumerable<IPublishedContent>>("sections");
+
+            foreach(var Section in Items) {
+                var SubSections = Section.GetPropertyValue<IEnumerable<IPublishedContent>>("homepageLinks");
+
+                <article class="col-xs-12 frontpage__snippet">
+                    <header>
+                        <h3>@Section.GetPropertyValue("sectionheadline")</h3>
+                    </header>
+                    <main>
+                        @Section.GetPropertyValue("sectionbody")
+                    </main>
+                    
+                    @if(SubSections.Count() > 0) {
+                        <footer>
+                            @foreach(var Snippet in SubSections) {
+
+                                var SnippetLinkObject = Snippet.GetPropertyValue<IPublishedContent>("homelinklnk");
+                                string SnippetLink = SnippetLinkObject.Url.ToString();
+
+                                string CoverImageUrl = string.Empty;
+                                if(Snippet.HasValue("homelinkimage")) {
+                                    CoverImageUrl = Snippet.GetPropertyValue<IPublishedContent>("homelinkimage").Url;
+                                } else {
+                                    CoverImageUrl = ContentHelper.GetDefaultPostImage();
+                                }
+
+                                <a class='snippet__link' href='@SnippetLink' title='@Snippet.GetPropertyValue("homelinklabel")'>
+                                    <span class="link__image">
+                                        <img src='@CoverImageUrl' alt='@Snippet.GetPropertyValue("homelinklabel")' title='@Snippet.GetPropertyValue("homelinklabel")' />
+                                    </span>
+                                    <span class='link__lnk'>
+                                        @Snippet.GetPropertyValue("homelinklabel")
+                                    </span>
+                                </a>
+
+                            }
+                        </footer>
+                    }
+                </article>
+            }
+        }
+        <article style="display: none" class="col-xs-12 frontpage__snippet">
+            <header>
+                <h3>Make sure you see it all</h3>
+            </header>
+            <main>
+                <p>Sometimes it is hard to know what to see and how to find it, but in our new app you can easily find information about current events and find them on our map of the park.</p>
+            </main>
+            <footer>
+                <a class="snippet__link" href="/" title="">
+                    <span class="link__image">
+                        <img src="https://cdni.rt.com/files/2015.10/article/5616703cc4618893278b457b.jpg" alt="" title="" />
+                    </span>
+                    <span class="link__lnk">
+                        Events
+                    </span>
+                </a>
+                <a class="snippet__link" href="/" title="">
+                    <span class="link__image">
+                        <img src="https://cdni.rt.com/files/2015.10/article/5616703cc4618893278b457b.jpg" alt="" title="" />
+                    </span>
+                    <span class="link__lnk">
+                        Events
+                    </span>
+                </a>
+            </footer>
+        </article>
+    </section>
+</main>

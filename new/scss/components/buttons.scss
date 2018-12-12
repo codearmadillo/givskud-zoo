@@ -1,0 +1,27 @@
+.btn {
+    display: inline-block;
+    text-decoration: none;
+    font-family: $font-primary;
+    font-size: 14px;
+    line-height: 32px;
+    padding: 0 10px;
+    transition: 300ms;
+    min-width: 105px;
+
+    border-radius: 0;
+    border: 0;
+    outline: 0;
+    
+    &--default {
+        background-color: $button-default-bg;
+        color: $button-default-color;
+
+        &:hover{
+            background-color: $button-default-bg-active;
+        }
+    }
+    &--warning {
+        background-color: rgb(230, 0, 0);
+        color: #fff;
+    }
+}

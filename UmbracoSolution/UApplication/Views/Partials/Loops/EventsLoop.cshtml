@@ -1,0 +1,66 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using PostController;
+@using System;
+
+<header>
+    <h2>Events</h2>
+</header>
+
+<main>
+    <section class="flexrow flexrow--gutters">
+
+        @{
+
+            var Nodes = Model.Content.Children().Where(x => x.IsVisible()).Where(y => y.GetPropertyValue("dateAndTime") != string.Empty).Where(x => DateTime.Parse(x.GetPropertyValue("dateAndTime").ToString()).ToString("dd/MM/yyyy") == DateTime.Now.ToString("dd/MM/yyyy"));
+
+            if(Nodes.Count() > 0) {
+                foreach(var Page in Nodes.OrderBy("UpdateDate desc")) {
+                    var EventDate = Page.GetPropertyValue("dateAndTime").ToString();
+                    DateTime EventDateParsed = DateTime.Parse(EventDate);
+
+                    string CoverImageUrl = string.Empty;
+                    if(Page.HasValue("image")) {
+                        CoverImageUrl = Page.GetPropertyValue<IPublishedContent>("image").Url;
+                    } else {
+                        CoverImageUrl = ContentHelper.GetDefaultPostImage();
+                    }
+
+                    <div class="col-xs-12 col-sm-6 col-md-4">
+                        <article class="post--events post">
+                            <div class="event__image">
+                                <span class="imageholder">
+                                    <img src="@CoverImageUrl" alt="@Page.GetPropertyValue("Headline")" title="@Page.GetPropertyValue("Headline")" />
+                                </span>
+                            </div>
+                            <div class="event__description">
+                                <h3>@Page.GetPropertyValue("Headline")</h3>
+                                <p>@Page.GetPropertyValue("bodyText")</p>
+                            </div>
+                            <div class="event__meta">
+                                <span class="meta__box meta__time">
+                                    @EventDateParsed.ToString("HH:mm")
+                                </span>
+                                <span class="meta__box meta__price">
+                                    @ContentHelper.ConvertToCurrency(Convert.ToInt32(@Page.GetPropertyValue("Price")))
+                                </span>
+                            </div>
+                            <div class="event__controls">
+                                @if(Page.HasValue("mapAttraction")){
+                                    var Node = Umbraco.TypedContent(Page.GetPropertyValue<int>("mapAttraction"));
+
+                                    if(Node.DocumentTypeAlias == "itemMap") {       
+                                       <a href="/park-map?location-callback=true&longitude=@Node.GetPropertyValue("longitude")&latitude=@Node.GetPropertyValue("latitude")" class="btn btn--default" title="Show on map">Show on map</a>
+                                    }
+                                }
+                            </div>
+                        </article>
+                    </div> 
+                }
+            } else {
+                @Html.Partial("Misc/NoContent");
+            }
+
+        }
+
+    </section>
+</main>
