@@ -113,3 +113,4 @@ _[Ss]cripts
 
 # Ignore Environments
 **/.vs
+UmbracoSolution/.vs/config/applicationhost.config
