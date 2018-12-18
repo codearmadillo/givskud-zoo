@@ -1,5 +1,8 @@
 ﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
 
+@using Types;
+@using GamesController;
+
 <script type="text/javascript">
     if (!navigator.cookieEnabled) {
         new Popup(Array(
@@ -30,118 +33,111 @@
 </style>
 
 @{
-    if(Request.Cookies["endgame"] == null) {
-        int CurrentQuestion = 0;
 
-        if(Request.Cookies["ingame"] != null && Request.Cookies["ingame"].Value.ToString() == "true"){
-            if(Request.Cookies["question"] != null) {
-                CurrentQuestion = Convert.ToInt32(Request.Cookies["question"].Value.ToString());
-            } else {
-                CurrentQuestion = 0;
-            }
-        } else {
-            CurrentQuestion = 0;
-        }
+    int GameId = Convert.ToInt32(UmbracoContext.Current.PageId.ToString());
+    string GameEndCookie = "gamesession-" + GameId.ToString() + "-endgame";
 
-        int Nth = 0;
-        var Items = Model.GetPropertyValue<IEnumerable<IPublishedContent>>("question");
-        int QuestionsTotal = Items.Count();
+    QuizController Controller = new QuizController();
+    Controller.Fetch(GameId, true);
 
-        foreach(var Question in Items) {
-            if(CurrentQuestion != Nth) {
-                Nth++;
-                continue;
-            }
+    if (Controller.HasItems()) {
 
-            <main class="game">
-                <section class="game__controls">
-                    <i class="fa fa-times"></i>
-                </section>
-                <section class="game__question">
-                    <header>
-                        <span class="imageholder">
-                            <img class="question__image" src="https://www.thoughtco.com/thmb/Bih_3hywEjEC-Fs1gAo-l_ZSPwA=/419x263/filters:fill(auto,1)/stegosaurusWC4-56a2534a3df78cf772747250.jpg" />
-                        </span>
-                        <h3 class="question__text">@Question.GetPropertyValue("question")</h3>
-                        <span class="question__hint">
-                            <button onclick="QuizModule.ShowHint()" class="btn btn--default">Show hint</button>
-                            <span class="hint__content">
-                                @Question.GetPropertyValue("hint")
+        Quiz Node = (Quiz)Controller.GetItems()[0];
+        List<Question> Questions = Node.Questions;
+        Question CurrentQuestion = Questions[0];
+
+        if (Questions.Count() > 0) {
+            if (Request.Cookies[GameEndCookie] == null || Request.Cookies[GameEndCookie].Value.ToString() == "false") {
+                <main class="game">
+                    <section class="game__controls">
+                        <i class="fa fa-times"></i>
+                    </section>
+                    <section class="game__question">
+                        <header>
+                            <span class="imageholder">
+                                <img class="question__image" alt="@CurrentQuestion.Text" src="@CurrentQuestion.ImageUrl" />
                             </span>
-                        </span>
-                    </header>
-                    <main>
-                        <div class="question__item" game-key="1">
-                            <span>A</span>
-                            <span>@Question.GetPropertyValue("answer1")</span>
-                        </div>
-                        <div class="question__item" game-key="2">
-                            <span>B</span>
-                            <span>@Question.GetPropertyValue("answer2")</span>
-                        </div>
-                        <div class="question__item" game-key="3">
-                            <span>C</span>
-                            <span>@Question.GetPropertyValue("answer3")</span>
-                        </div>
-                        <div class="question__item" game-key="4">
-                            <span>D</span>
-                            <span>@Question.GetPropertyValue("answer4")</span>
-                        </div>
-                    </main>
-                </section>
-                <section class="game__counter">
-                    @(Nth+1) of @QuestionsTotal
-                </section>
-            </main>
+                            <h3 class="question__text">@CurrentQuestion.Text</h3>
+                            <span class="question__hint">
+                                <button id="hint-controls" onclick="game.showhint()" class="btn btn--default">Show hint</button>
+                                <span class="hint__content">
+                                    @CurrentQuestion.Hint
+                                </span>
+                            </span>
+                        </header>
+                        <main>
+                            <div class="question__item" game-key="0">
+                                <span>A</span>
+                                <span>@CurrentQuestion.Answers[0]</span>
+                            </div>
+                            <div class="question__item" game-key="1">
+                                <span>B</span>
+                                <span>@CurrentQuestion.Answers[1]</span>
+                            </div>
+                            <div class="question__item" game-key="2">
+                                <span>C</span>
+                                <span>@CurrentQuestion.Answers[2]</span>
+                            </div>
+                            <div class="question__item" game-key="3">
+                                <span>D</span>
+                                <span>@CurrentQuestion.Answers[3]</span>
+                            </div>
+                        </main>
+                    </section>
+                    <section class="game__counter">
+                        1 of @Questions.Count()
+                    </section>
+                </main>
+            }
+            else {
+                string GameScoreCookie = "gamesession-" + GameId.ToString() + "-score";
+
+                int Score = Convert.ToInt32(Request.Cookies[GameScoreCookie].Value.ToString());
+                int Count = Convert.ToInt32(@Questions.Count());
+                int ScorePercentage = (100 / Count) * Score;
+
+                <main class="game game--endgame">
+                    <section class="game__message">
+                        <h2>Good Job!</h2>
+
+                        @if (ScorePercentage > 80) {
+                            <p>You are a master!</p>
+                            <p>You are very clever when it comes to @Node.Topic!</p>
+                        }
+                        else if (ScorePercentage < 80 && ScorePercentage > 55) {
+                            <p>Your score is great!</p>
+                            <p>Your knowledge about @Node.Topic is very good.</p>
+                        }
+                        else if (ScorePercentage < 55 && ScorePercentage > 30) {
+                            <p>That is not bad!</p>
+                            <p>Your knowledge about @Node.Topic could use some exercise.</p>
+                        }
+                        else {
+                            <p>Don't you worry, you will do better next time!</p>
+                            <p>Run through our park to get to know more about @Node.Topic!</p>
+                        }
+
+                    </section>
+                    <section class="game__score">
+                        @ScorePercentage%
+                    </section>
+                    <section class="game__buttons">
+                        <button onclick="location.reload()" class="btn btn--default">Play again</button>
+                        <button onclick="location.href='/games/'" class="btn btn--warning">Quit</button>
+                    </section>
+                </main>
+            }
 
             <script type="text/javascript">
-                var QuizSettings = {
-                    currentquestion: @CurrentQuestion,
-                    correctanswer: @Question.GetPropertyValue("correctAnswer"),
-                    questionlimit: @QuestionsTotal
-                }
-                QuizModule.Init();
+                var quizjson = @Html.Raw(Node.QuizJson());
+                var game = new Game(@GameId, @Questions.Count());
             </script>
-
-            break;
         }
-    } else {
-        var Items = Model.GetPropertyValue<IEnumerable<IPublishedContent>>("question");
-        int QuestionsTotal = Items.Count();
-        int Score = Convert.ToInt32(Request.Cookies["score"].Value.ToString());
-
-        int ScorePercentage = (100 / QuestionsTotal) * Score;
-
-        <main class="game game--endgame">
-            <section class="game__message">
-                <h2>Good Job!</h2>
-
-                @if(ScorePercentage > 80) {
-                    <p>You are a master!</p>
-                    <p>You are very clever when it comes to @Model.GetPropertyValue("topic")!</p>
-                } else if (ScorePercentage < 80 && ScorePercentage > 55) {
-                    <p>Your score is great!</p>
-                    <p>Your knowledge about @Model.GetPropertyValue("topic") is very good.</p>
-                } else if (ScorePercentage < 55 && ScorePercentage > 30) {
-                    <p>That is not bad!</p>
-                    <p>Your knowledge about @Model.GetPropertyValue("topic") could use some exercise.</p>
-                } else {
-                    <p>Don't you worry, you will do better next time!</p>
-                    <p>Run through our park to get to know more about @Model.GetPropertyValue("topic")!</p>
-                }
-
-            </section>
-            <section class="game__score">
-                @ScorePercentage%
-            </section>
-            <section class="game__buttons">
-                <button class="js-playagain btn btn--default">Play again</button>
-                <button class="js-leavequiz btn btn--warning">Quit</button>
-            </section>
-        </main>
-
-        <script type="text/javascript">
-            QuizModule.EndGame();
-        </script>
+        else {
+            Response.Redirect("/games");
+        }
+    }
+    else {
+        Response.Redirect("/games");
     }
 }

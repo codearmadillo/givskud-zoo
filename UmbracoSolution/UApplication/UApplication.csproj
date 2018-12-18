@@ -255,6 +255,7 @@
     <Content Include="App_Plugins\ModelsBuilder\modelsbuilder.controller.js" />
     <Content Include="App_Plugins\ModelsBuilder\modelsbuilder.htm" />
     <Content Include="App_Plugins\ModelsBuilder\modelsbuilder.resource.js" />
+    <Content Include="Assets\images\GivskudZoo_Map_JpegExport.jpg" />
     <Content Include="Assets\images\map.first-run.svg" />
     <Content Include="Assets\images\map.icon.location.svg" />
     <Content Include="Assets\images\map.icon.zoom-in.svg" />
@@ -290,6 +291,15 @@
     <Content Include="App_Code\PostController.cs" />
     <Content Include="App_Code\PageComponents.cs" />
     <Content Include="App_Code\Services.cs" />
+    <Content Include="App_Code\GameController.cs" />
+    <Content Include="App_Code\Content\EventsController.cs" />
+    <Content Include="App_Code\Content\MapController.cs" />
+    <Content Include="App_Code\Content\ContentHelpers.cs" />
+    <Content Include="App_Code\Content\ContentController.cs" />
+    <Content Include="App_Code\Content\PostsController.cs" />
+    <Content Include="App_Code\Content\MembersController.cs" />
+    <Content Include="App_Code\Content\HomepageController.cs" />
+    <Content Include="App_Code\Content\GamesController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -351,7 +361,9 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Code\Services\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

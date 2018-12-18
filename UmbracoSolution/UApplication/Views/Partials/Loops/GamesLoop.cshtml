@@ -1,4 +1,8 @@
 ﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+
+@using Types;
+@using GamesController;
+
 @using PostController;
 
 <header>
@@ -8,36 +12,33 @@
 <main>
     <section class="flexrow flexrow--gutters">
        
-    @{
-        var Nodes = Model.Content.Children().Where(x => x.IsVisible());
+    @{ 
+        QuizController Controller = new QuizController();
+        Controller.Fetch();
 
-        if(Nodes.Count() > 0) {
-            foreach(var Page in Nodes) {
-                string CoverImageUrl = string.Empty;
-                if(Page.HasValue("image")) {
-                    CoverImageUrl = Page.GetPropertyValue<IPublishedContent>("image").Url;
-                } else {
-                    CoverImageUrl = ContentHelper.GetDefaultPostImage();
-                }
+        if (Controller.HasItems()) {
+            List<object> Nodes = Controller.GetItems();
+
+            foreach(object Node in Nodes) {
+                Quiz Game = (Quiz)Node;
+                
                 <div class="col-xs-12 col-sm-6 col-md-4">
                     <article class="flexrow post post--games">
                         <div class="col-xs-6 game__image">
                             <span class="imageholder">
-                                <img src="@CoverImageUrl" title='@Page.GetPropertyValue("title")' alt='@Page.GetPropertyValue("title")'/>
+                                <img src="@Game.Image" title='@Game.Title' alt='@Game.Title'/>
                             </span>
                         </div>
                         <div class="col-xs-6 game__description">
-                            <h3>@Page.GetPropertyValue("title")</h3>
-                            <p>@Page.GetPropertyValue("description")</p>
+                            <h3>@Game.Title</h3>
+                            <p>@Game.Description</p>
                         </div>
                         <div class="col-xs-12 game__controls">
-                            <a href="@Page.Url" class="btn btn--default" title="Play game">Play game</a>
+                            <a href="@Game.Url" onclick="" class="btn btn--default" title="Play game">Play game</a>
                         </div>
                     </article>
                 </div>
             }
-        } else {
-            @Html.Partial("Misc/NoContent");
         }
     }
 

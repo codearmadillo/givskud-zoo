@@ -1,6 +1,7 @@
 ﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
-@using PostController;
-@using System;
+
+@using Types;
+@using EventsController;
 
 <header>
     <h2>Events</h2>
@@ -11,52 +12,51 @@
 
         @{
 
-            var Nodes = Model.Content.Children().Where(x => x.IsVisible()).Where(y => y.GetPropertyValue("dateAndTime") != string.Empty).Where(x => DateTime.Parse(x.GetPropertyValue("dateAndTime").ToString()).ToString("dd/MM/yyyy") == DateTime.Now.ToString("dd/MM/yyyy"));
+            EventsController Controller = new EventsController();
+            Controller.Fetch();
 
-            if(Nodes.Count() > 0) {
-                foreach(var Page in Nodes.OrderBy("UpdateDate desc")) {
-                    var EventDate = Page.GetPropertyValue("dateAndTime").ToString();
-                    DateTime EventDateParsed = DateTime.Parse(EventDate);
+            if (Controller.HasItems()) {
 
-                    string CoverImageUrl = string.Empty;
-                    if(Page.HasValue("image")) {
-                        CoverImageUrl = Page.GetPropertyValue<IPublishedContent>("image").Url;
-                    } else {
-                        CoverImageUrl = ContentHelper.GetDefaultPostImage();
-                    }
+                List<object> Nodes = Controller.GetItems();
 
-                    <div class="col-xs-12 col-sm-6 col-md-4">
+                foreach (object Node in Nodes) {
+
+                    Event Event = (Event)Node;
+
+                    <div class="col-xs-12 col-sm-6 col-md-4" @(Event.IsToday ? "data-event=today" : "")>
                         <article class="post--events post">
                             <div class="event__image">
                                 <span class="imageholder">
-                                    <img src="@CoverImageUrl" alt="@Page.GetPropertyValue("Headline")" title="@Page.GetPropertyValue("Headline")" />
+                                    <img src="@Event.ImageUrl" alt="@Event.Name" title="@Event.Name" />
                                 </span>
                             </div>
                             <div class="event__description">
-                                <h3>@Page.GetPropertyValue("Headline")</h3>
-                                <p>@Page.GetPropertyValue("bodyText")</p>
+                                <h3>@Event.Name</h3>
+                                <p>@Event.Description</p>
                             </div>
                             <div class="event__meta">
                                 <span class="meta__box meta__time">
-                                    @EventDateParsed.ToString("HH:mm")
+                                    @if (Event.IsToday) {
+                                        @Event.Time
+                                    }
+                                    else {
+                                        @Event.Date <br /> @Event.Time
+                                    }
                                 </span>
                                 <span class="meta__box meta__price">
-                                    @ContentHelper.ConvertToCurrency(Convert.ToInt32(@Page.GetPropertyValue("Price")))
+                                    @Event.Price
                                 </span>
                             </div>
                             <div class="event__controls">
-                                @if(Page.HasValue("mapAttraction")){
-                                    var Node = Umbraco.TypedContent(Page.GetPropertyValue<int>("mapAttraction"));
-
-                                    if(Node.DocumentTypeAlias == "itemMap") {       
-                                       <a href="/park-map?location-callback=true&longitude=@Node.GetPropertyValue("longitude")&latitude=@Node.GetPropertyValue("latitude")" class="btn btn--default" title="Show on map">Show on map</a>
-                                    }
+                                @if (Event.MapPoint != null) {
+                                    <a href="/park-map?location-callback=true&longitude=@Event.MapPoint.Longitude&latitude=@Event.MapPoint.Latitude" class="btn btn--default" title="Show on map">Show on map</a>
                                 }
                             </div>
                         </article>
-                    </div> 
+                    </div>
                 }
-            } else {
+            }
+            else {
                 @Html.Partial("Misc/NoContent");
             }
 

@@ -19,8 +19,8 @@ using Umbraco.ModelsBuilder;
 using Umbraco.ModelsBuilder.Umbraco;
 
 [assembly: PureLiveAssembly]
-[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "790544fb89a25655")]
-[assembly:System.Reflection.AssemblyVersion("0.0.0.5")]
+[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "cebbff1ba1dc4b34")]
+[assembly:System.Reflection.AssemblyVersion("0.0.0.6")]
 
 namespace Umbraco.Web.PublishedContentModels
 {
@@ -751,12 +751,12 @@ namespace Umbraco.Web.PublishedContentModels
 		}
 
 		///<summary>
-		/// Category: Should start with capital letter e.g. 'Animals' or 'Facilities'
+		/// Category
 		///</summary>
 		[ImplementPropertyType("category")]
-		public string Category
+		public IPublishedContent Category
 		{
-			get { return this.GetPropertyValue<string>("category"); }
+			get { return this.GetPropertyValue<IPublishedContent>("category"); }
 		}
 
 		///<summary>
@@ -872,6 +872,76 @@ namespace Umbraco.Web.PublishedContentModels
 		public IPublishedContent Homelinklnk
 		{
 			get { return this.GetPropertyValue<IPublishedContent>("homelinklnk"); }
+		}
+	}
+
+	/// <summary>Location Category</summary>
+	[PublishedContentModel("locationCategory")]
+	public partial class LocationCategory : PublishedContentModel
+	{
+#pragma warning disable 0109 // new is redundant
+		public new const string ModelTypeAlias = "locationCategory";
+		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
+#pragma warning restore 0109
+
+		public LocationCategory(IPublishedContent content)
+			: base(content)
+		{ }
+
+#pragma warning disable 0109 // new is redundant
+		public new static PublishedContentType GetModelContentType()
+		{
+			return PublishedContentType.Get(ModelItemType, ModelTypeAlias);
+		}
+#pragma warning restore 0109
+
+		public static PublishedPropertyType GetModelPropertyType<TValue>(Expression<Func<LocationCategory, TValue>> selector)
+		{
+			return PublishedContentModelUtility.GetModelPropertyType(GetModelContentType(), selector);
+		}
+
+		///<summary>
+		/// Icon
+		///</summary>
+		[ImplementPropertyType("icon")]
+		public IPublishedContent Icon
+		{
+			get { return this.GetPropertyValue<IPublishedContent>("icon"); }
+		}
+
+		///<summary>
+		/// Label: Animals
+		///</summary>
+		[ImplementPropertyType("label")]
+		public string Label
+		{
+			get { return this.GetPropertyValue<string>("label"); }
+		}
+	}
+
+	/// <summary>Generic Folder</summary>
+	[PublishedContentModel("genericFolder")]
+	public partial class GenericFolder : PublishedContentModel
+	{
+#pragma warning disable 0109 // new is redundant
+		public new const string ModelTypeAlias = "genericFolder";
+		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
+#pragma warning restore 0109
+
+		public GenericFolder(IPublishedContent content)
+			: base(content)
+		{ }
+
+#pragma warning disable 0109 // new is redundant
+		public new static PublishedContentType GetModelContentType()
+		{
+			return PublishedContentType.Get(ModelItemType, ModelTypeAlias);
+		}
+#pragma warning restore 0109
+
+		public static PublishedPropertyType GetModelPropertyType<TValue>(Expression<Func<GenericFolder, TValue>> selector)
+		{
+			return PublishedContentModelUtility.GetModelPropertyType(GetModelContentType(), selector);
 		}
 	}
 

@@ -305,28 +305,40 @@ class InteractiveMap {
             return navigator.geolocation.getCurrentPosition(function(res){
                 let Coords = res.coords;
 
-                if(!self.Markers.location){
-                    self.AddMarkers(Array({
-                        group: {
-                            id: 'location',
-                            slug: 'location',
-                            label: 'Location',
-                            icon: null,
-                            controller: false
-                        },
-                        id: 'location',
-                        label: 'My location',
-                        listener: false,
-                        position: {
+                if(self.IsLocationInBounds(res.coords)){
+                    if(!self.Markers.location){
+                        self.AddMarkers(Array({
+                            Category: {
+                                Id: 'location',
+                                Slug: 'location',
+                                Label: 'Location',
+                                Icon: null,
+                                controller: false
+                            },
+                            Id: 'location',
+                            Title: 'My location',
+                            listener: false,
+                            Description: "",
+                            Latitude: Coords.latitude,
+                            Longitude: Coords.longitude
+                        }));
+                    } else {
+                        self.Markers.location.items.location.position = {
                             x: Coords.longitude,
-                            y: Coords.latitude
+                            y: Coords.latitude      
                         }
-                    }));
-                } else {
-                    self.Markers.location.items.location.position = {
-                        x: Coords.longitude,
-                        y: Coords.latitude
                     }
+                } else {
+                    return new Popup(Array(
+                        {
+                            tag: "h2",
+                            text: "Location error"
+                        },
+                        {
+                            tag: "p",
+                            text: "Seems like you are not in the area of the Zoo"
+                        }
+                    ), true);
                 }
             }, this.MapLocationError, Options);
         } else {
@@ -334,23 +346,62 @@ class InteractiveMap {
         }
     }
     MapLocationError(e){
+
+        let PopupProp = Array();
+
+        PopupProp.push({
+            tag: "h2",
+            text: "Map error"
+        });
+
         switch(e.code){
             case e.PERMISSION_DENIED:
-                console.log("User denied the request for Geolocation.");
+                PopupProp.push(
+                    {
+                        tag: "p",
+                        text: "User denied the request for Geolocation."
+                    }
+                );
                 break;
             case e.POSITION_UNAVAILABLE:
-                console.log("Location information is unavailable.");
+                PopupProp.push(
+                    {
+                        tag: "p",
+                        text: "Location information is unavailable."
+                    }
+                );
                 break;
             case e.TIMEOUT:
-                console.log("The request to get user location timed out.");
+                PopupProp.push(
+                    {
+                        tag: "p",
+                        text: "The request to get user location timed out."
+                    }
+                );
                 break;
             case e.UNKNOWN_ERROR:
             default:
-                console.log("An unknown error occurred.");
+                PopupProp.push(
+                    {
+                        tag: "p",
+                        text: "An unknown error occurred."
+                    }
+                );
                 break;
         }
 
-        return false;
+        return new Popup(PopupProp, true);
+    }
+    IsLocationInBounds(coords) {
+        if(coords.longitude > this.Map.Longitude.Start && coords.longitude < this.Map.Longitude.End) {
+            if(coords.latitude > this.Map.Latitude.End && coords.latitude < this.Map.Latitude.Start) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     // Map event callbacks
@@ -562,25 +613,33 @@ class InteractiveMap {
         var self = context;
 
         markers.forEach(function(val){
-            if(!self.Markers[val.group.id]){
-                self.Markers[val.group.id] = {
-                    id: val.group.id,
-                    label: val.group.label,
-                    slug: val.group.slug,
-                    icon: val.group.icon,
+            if(!self.Markers[val.Category.Id]){
+                self.Markers[val.Category.Id] = {
+                    id: val.Category.Id,
+                    label: val.Category.Label,
+                    slug: val.Category.Slug,
+                    icon: val.Category.Icon,
                     items: {}
                 };
             }
-            if(self.Markers[val.group.id]['items'][val.id]){
+            if(self.Markers[val.Category.Id]['items'][val.Id]){
                 console.log('Warning: Duplicate marker ID');
                 return;
             } else {
-                self.Markers[val.group.id]['items'][val.id] = new InteractiveMapMarker({
-                    id: val.id,
-                    group: val.group,
-                    label: val.label,
-                    position: val.position,
-                    desc: val.description ? val.description : null
+                self.Markers[val.Category.Id]['items'][val.Id] = new InteractiveMapMarker({
+                    id: val.Id,
+                    group: {
+                        id: val.Category.Id,
+                        label: val.Category.Label,
+                        slug: val.Category.Slug,
+                        icon: val.Category.Icon
+                    },
+                    label: val.Title,
+                    position: {
+                        x: val.Longitude,
+                        y: val.Latitude
+                    },
+                    desc: val.Description,
                 });
             }
         });
@@ -669,6 +728,20 @@ class InteractiveMap {
     }
 
     // Map controllers
+    ToggleMarkersControlls() {
+        let current = MapObject.Elements.Controllers.Markers.Controls.style.display;
+
+        switch(current == "none") {
+            case true:
+                MapObject.Elements.Controllers.Markers.Controls.style.display = "block";
+                break;
+            case false: 
+                MapObject.Elements.Controllers.Markers.Controls.style.display = "none"
+                break;
+        }
+
+        return true;
+    }
     CreateControllers() {
         var self = this;
 
@@ -706,6 +779,13 @@ class InteractiveMap {
         this.Elements.Controllers.Location = LocationController;
         this.Elements.Controllers.Parent.appendChild(this.Elements.Controllers.Location);
 
+        var ControllsToggleSidebar = document.createElement('span');
+            ControllsToggleSidebar.className = "iamap-toggle-sidebar";
+            ControllsToggleSidebar.addEventListener('click', function(e){
+                self.ToggleMarkersControlls();
+            });
+        this.Elements.Controllers.OpenSidebar = ControllsToggleSidebar;
+        this.Elements.Parent.appendChild(this.Elements.Controllers.OpenSidebar);
 
         // Zoom controllers
         var ZoomInController = document.createElement('span');
@@ -798,22 +878,88 @@ class InteractiveMap {
             self.Pan.YStart = null;
         });
 
-        return true
 
-        // Marker controls
+        // Markers controls
+        var FilterControls = document.createElement('div');
+            FilterControls.className = "iamap-filters__controls";
         var FilterWrapper = document.createElement('div');
-            FilterWrapper.className = 'iamap-filterwrapper';
+            FilterWrapper.className = "iamap-filters__wrapper";
 
-        var FilterWrapperClose = document.createElement('span');
-            FilterWrapperClose.className = 'close';
-            FilterWrapperClose.addEventListener('click', function(e){
-                self.ToggleMapSidebar('close');
+        var FilterWrapperHeadline = document.createElement('h2');
+        var FilterWrapperHeadlineTxt = document.createTextNode('Overview of the Park');
+            FilterWrapperHeadline.appendChild(FilterWrapperHeadlineTxt);
+
+        var FilterWrapperDescription = document.createElement('span');
+        var FilterWrapperDescriptionTxt = document.createTextNode('Here on this map you can get an overview of all the different enclosures, activities, facilities and more.');
+            FilterWrapperDescription.appendChild(FilterWrapperDescriptionTxt);
+
+        var FilterWrapperClose = document.createElement('div');
+            FilterWrapperClose.className = "iamap-filters__close";
+            FilterWrapperClose.addEventListener('click', function(){
+                self.ToggleMarkersControlls();
             });
 
-        FilterWrapper.appendChild(FilterWrapperClose);
+        if(!this.Elements.Controllers.Markers) {
+            this.Elements.Controllers.Markers = {};
+        }
 
-        this.Elements.Controllers.FilterWrapper = FilterWrapper;
-        this.Elements.Parent.appendChild(this.Elements.Controllers.FilterWrapper);
+        let CloseElement = document.createElement('span');
+            CloseElement.className = 'close';
+            CloseElement.addEventListener('click', function(e){
+                self.ToggleMarkersControlls();
+            });
+
+            FilterWrapper.append(CloseElement, FilterWrapperHeadline, FilterWrapperDescription);
+
+        this.Elements.Controllers.Markers.ControlsWrapper = FilterWrapper;
+        this.Elements.Controllers.Markers.ControlsClose = FilterWrapperClose;
+        this.Elements.Controllers.Markers.Controls = FilterControls;
+            
+        this.Elements.Controllers.Markers.Controls.append(this.Elements.Controllers.Markers.ControlsWrapper, this.Elements.Controllers.Markers.ControlsClose);
+        this.Elements.Parent.appendChild(this.Elements.Controllers.Markers.Controls);
+
+        for(let key in self.Markers){
+            let Marker = self.Markers[key];
+
+            if(Marker.controller === false){
+                return;
+            }
+
+            let MarkerController = document.createElement('label');
+                MarkerController.htmlFor = Marker.slug;
+            let MarkerControllerTxt = document.createTextNode(Marker.label);
+            let MarkerControllerLabel = document.createElement('span');
+                MarkerControllerLabel.appendChild(MarkerControllerTxt);
+            let MarkerControllerInput = document.createElement('input');
+                MarkerControllerInput.type = 'checkbox';
+                MarkerControllerInput.checked = 'checked';
+                MarkerControllerInput.id = Marker.slug; MarkerControllerInput.name = Marker.slug;
+                MarkerControllerInput.addEventListener('change', function(e){
+                    if(this.checked) {
+                        MarkerController.classList.add('active');
+                        self.ShowMarkers({
+                            type: 'group',
+                            group: Marker.id.toString()
+                        });
+                    } else {
+                        MarkerController.classList.remove('active');
+                        self.HideMarkers({
+                            type: 'group',
+                            group: Marker.id.toString()
+                        });
+                    }
+                });
+
+                MarkerController.append(
+                    MarkerControllerInput,
+                    MarkerControllerLabel
+                );
+
+            this.Elements.Controllers["Group"+Marker.id] = MarkerController;
+            this.Elements.Controllers.Markers.ControlsWrapper.appendChild(this.Elements.Controllers["Group"+Marker.id]);
+        }
+
+        return true;
 
         for(let key in self.Markers){
             let Marker = self.Markers[key];
