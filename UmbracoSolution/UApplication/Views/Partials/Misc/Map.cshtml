@@ -1,5 +1,8 @@
 ﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 
+@using Types;
+@using MapController;
+
 <header>
     <h2>Park Map</h2>
 </header>
@@ -11,7 +14,7 @@
 <script src="~/Assets/scripts/application.js"></script>
 <script type="text/javascript">
     var MapConfig = {
-        Map: "/Assets/images/GivskudZoo_Map.svg",
+        Map: "/Assets/images/GivskudZoo_Map_JpegExport.jpg",
         UsesRealWorld: true,
         Longitude: {
             Start: 9.34326,
@@ -24,11 +27,25 @@
     }
     var Config = {
         Position: {
-            x: 10,
-            y: 10
+            x: null,
+            y: null
         },
         Zoom: 1
     }
 
     var MapObject = new InteractiveMap(document.getElementById('page-map'), MapConfig, Config);
+
+    @{
+        MapController Controller = new MapController();
+        Controller.Fetch();
+
+        HtmlString JsonData = new HtmlString(Controller.RenderMarkersAsJson());
+    }
+
+    var MapMarkers = @(string.IsNullOrEmpty(JsonData.ToString()) ? new HtmlString("null") : JsonData);
+
+    if (MapMarkers) {
+        MapObject.AddMarkers(MapMarkers);
+    }
+
 </script>

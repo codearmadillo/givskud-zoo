@@ -1,0 +1,134 @@
+.iamap {
+    font-family: $font-primary;
+    color: #fff;
+
+    &-toggle-sidebar {
+
+        position: absolute;
+        right: 12px; top: 12px;
+
+        &, &::before, &::after {
+            width: 25px;
+            height: 2px;
+            display: block;
+            background-color: #323232;
+        }
+        &::before, &::after{
+            content: '';
+            position: relative;
+        }
+        &::before {
+            transform: translateY(6px);
+        }
+        &::after {
+            transform: translateY(10px);
+        }
+
+        z-index: 200;
+    }
+    &-filters__controls {
+        position: absolute;
+        width: 100%;
+        top: 0; bottom: 0;
+        z-index: 400;
+    }
+    &-filters__wrapper,
+    &-filters__close{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+
+        z-index: 500;
+    }
+    &-filters__wrapper {
+        width: 75%;
+        background-color: #323232;
+
+        padding: 18px 16px;
+
+        .close {
+            position: absolute;
+            display: block;
+            width: 20px;
+            right: 20px;
+            right: 10px; top: 10px;
+
+            &::before, &::after {
+                position: absolute;
+                left: 10px;
+                content: ' ';
+                top: 0;
+                height: 20px;
+                width: 2px;
+                background-color: #fff;
+            }
+            &::before {
+                transform: rotate(45deg);
+            }
+            &::after {
+                transform: rotate(-45deg);
+            }
+        }
+        h2, span {
+            display: block;
+            width: 100%;
+        }
+        span {
+            padding-bottom: 20px;
+        }
+        label {
+            position: relative;
+            font-size: 19px;
+            font-weight: bold;
+            line-height: 24px;
+
+            span {
+                position: relative;
+                display: block;
+                width: 100%;
+
+                &::before {
+                    display: inline-block;
+                    position: relative;
+                    content: '';
+                    height: 24px; width: 47px;
+                    top: 4px; margin-right: 18px;
+                    
+                    box-sizing: border-box;
+                    border-radius: 12px;
+    
+                    border: 2px solid #FF1924;
+                }
+                &::after {
+                    display: block;
+                    content: '';
+                    position: absolute;
+                    height: 16px; width: 16px;
+                    border-radius: 8px;
+                    background-color: #FF1924;
+                    top: 8px; left: 27px;
+                }
+            }
+            input {
+                display: none;
+            }
+            input:checked + span {
+                &::before {
+                    border: 2px solid #85BF00;
+                }
+                &::after {
+                    background-color: #85BF00;
+                    left: 4px;
+                }
+            }
+        }
+    }
+    &-filters__close {
+        width: 25%;
+        background-color: rgba(0,0,0,0.3);
+        left: 75%;
+    }
+}
+.map-container {
+    background-color: rgb(227, 237, 246);
+}

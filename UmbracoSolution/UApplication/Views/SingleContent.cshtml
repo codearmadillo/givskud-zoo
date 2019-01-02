@@ -1,35 +1,55 @@
 ﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+
+@using Types;
+@using PostsController;
+
 @{
-	Layout = "Master.cshtml";
+    Layout = "Master.cshtml";
 }
 
 @{
-    string Headline = Model.Content.Parent.HasValue("title") ? Model.Content.Parent.GetPropertyValue<string>("title") : Model.Content.Parent.Name;
-    string Author = string.Empty;
-    string Time = string.Empty;
-    string PostHeadline = Model.Content.GetPropertyValue<string>("headline");
-    var PostBody = Model.Content.GetPropertyValue("bodyText");
+    string Headline = string.Empty;
+
+
+    switch (Model.Content.DocumentTypeAlias) {
+        case "itemNews":
+            PostsController Controller = new PostsController();
+            Controller.Fetch(Model.Content.Id);
+
+            if (Controller.HasItems()) {
+
+                var Node = Controller.GetItems()[0];
+                Post Post = (Post) Node;
+
+                <header>
+                    <h2>
+                        Newsfeed
+                    </h2>
+                </header>
+
+                <main>
+                    <section class="news__single">
+                        <header>
+                            <span class="post__author">
+                                @Post.Author.userName
+                            </span>
+                            <span class="post__time">
+                                @if (Post.Date == DateTime.Now.ToString("dd/MM/yyyy")) {
+                                    @("Today at " + @Post.Time)
+                                }
+                                else {
+                                    @Post.Date
+                                }
+                            </span>
+                        </header>
+                        <main>
+                            <h2>@Post.Title</h2>
+                            @Html.Raw(Post.Body)
+                        </main>
+                    </section>
+                </main>
+            }
+
+            break;
+    }
 }
-
-<header>
-    <h2>
-        @Headline
-    </h2>
-</header>
-
-<main>
-    <section class="news__single">
-        <header>
-            <span class="post__author">
-                @Author
-            </span>
-            <span class="post__time">
-                @Time
-            </span>
-        </header>
-        <main>
-            <h2>@PostHeadline</h2>
-            @PostBody
-        </main>
-    </section>
-</main>

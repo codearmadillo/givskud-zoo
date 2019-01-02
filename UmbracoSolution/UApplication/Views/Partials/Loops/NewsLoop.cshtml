@@ -1,5 +1,7 @@
 ﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
-@using PostController;
+
+@using Types;
+@using PostsController;
 
 <header>
     <h2>Newsfeed</h2>
@@ -10,30 +12,44 @@
     <section class="flexrow flexrow--gutters">
 
         @{
-            var Nodes = Model.Content.Children().Where(x => x.IsVisible());
 
-            if(Nodes.Count() > 0) {
-                foreach(var Page in Nodes.OrderBy("UpdateDate desc")) {
+            PostsController Controller = new PostsController();
+            Controller.Fetch();
+
+            if (Controller.HasItems()) {
+                List<object> Nodes = Controller.GetItems();
+
+                foreach (object Node in Nodes) {
+                    Post Post = (Post)Node;
+
                     <div class="col-xs-12 col-sm-6 col-md-4">
-                        <a href="@Page.Url" title="@Page.GetPropertyValue(" Headline")">
+                        <a href="@Post.Url" title="@Post.Title">
                             <article class="post--news post">
                                 <div class="post__author">
-                                    <img src="@ContentHelper.AuthorImage(@Page.CreatorId)" alt="Published by @Page.CreatorName" class="author__image" />
-                                    <span class="author__name">@Page.CreatorName</span>
+                                    <img src="@Post.Author.userImage" alt="Published by @Post.Author.userName" class="author__image" />
+                                    <span class="author__name">@Post.Author.userName</span>
                                 </div>
+
                                 <div class="post__content">
                                     <span class="content__excerpt">
-                                        @ContentHelper.GetExcerpt(@Page.GetPropertyValue("bodyText").ToString(), 160)
+                                        <h3>@Post.Title</h3>
+                                        @Post.Excerpt
                                     </span>
                                     <span class="content__time">
-                                        @Page.CreateDate.ToString("%d MMM, yyyy")
+                                        @if (Post.Date == DateTime.Now.ToString("dd/MM/yyyy")) {
+                                            @("Today at " + @Post.Time)
+                                        }
+                                        else {
+                                            @Post.Date
+                                        }
                                     </span>
                                 </div>
                             </article>
                         </a>
                     </div>
                 }
-            } else {
+            }
+            else {
                 @Html.Partial("Misc/NoContent");
             }
 
