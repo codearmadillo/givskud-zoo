@@ -17,11 +17,6 @@ namespace UApi.Controllers
     {
         readonly int pageId = 1128;
 
-
-
-
-
-
         // /umbraco/api/event/postevent
         [HttpPost] // Api -> Post new event item(child) under events(parent)
         public string PostEvent([FromBody] Event data)
@@ -36,10 +31,6 @@ namespace UApi.Controllers
             string result = isSaved ? "OK" : "ERROR";
             return result;
         }
-
-
-
-
 
 
         // /umbraco/api/event/getevents

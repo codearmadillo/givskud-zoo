@@ -287,8 +287,6 @@
   <ItemGroup>
     <Content Include="App_Code\PostController.cs" />
     <Content Include="App_Code\PageComponents.cs" />
-    <Content Include="App_Code\Services.cs" />
-    <Content Include="App_Code\GameController.cs" />
     <Content Include="App_Code\Content\EventsController.cs" />
     <Content Include="App_Code\Content\MapController.cs" />
     <Content Include="App_Code\Content\ContentHelpers.cs" />
@@ -363,7 +361,6 @@
       <Project>{087dc55f-5b2d-48b8-83ef-f655cf4cd452}</Project>
       <Name>UApi</Name>
     </ProjectReference>
-    <Folder Include="App_Code\Services\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

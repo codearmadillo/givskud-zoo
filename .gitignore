@@ -114,3 +114,7 @@ _[Ss]cripts
 # Ignore Environments
 **/.vs
 UmbracoSolution/.vs/config/applicationhost.config
+UmbracoSolution/.vs/config/applicationhost.config
+UmbracoSolution/UApplication/App_Data/Models/all.dll.path
+*.png
+*.jpg

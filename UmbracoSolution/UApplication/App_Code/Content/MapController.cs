@@ -58,20 +58,3 @@ namespace MapController {
         }
     }
 }
-/*
-var MarkersData = Array({
-            group: {
-                id: 0,
-                slug: 'cities',
-                label: 'Cities',
-                icon: null
-            },
-            id: 1226,
-            label: 'Copenhagen',
-            description: 'Description',
-            position: {
-                x: 12.5683372,
-                y: 55.6760968
-            }
-        }
-        */

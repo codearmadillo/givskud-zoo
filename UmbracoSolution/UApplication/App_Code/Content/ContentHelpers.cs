@@ -19,13 +19,13 @@ namespace ContentHelpers {
             return string.Join(" ", Washed.Substring(0, Washed.Length > Size ? Size : Washed.Length).Split(' ').Reverse().Skip(1).Reverse()) + (Washed.Length <= Size ? "" : "...");
         }
         public static string DefaultAvatar() {
-            return "https://pbs.twimg.com/profile_images/2553092547/4square_avatar_400x400.jpg";
+            return "Assets/images/user-default.jpg";
         }
         public static string ConvertToCurrency(int Value) {
             return Value > 0 ? "DKK " + Value : "Free";
         }
         public static string GetDefaultPostImage() {
-            return "https://www.chesterzoo.org/~/media/images/animals/mammals/carnivores/lions/asiatic%20lion%20iblis%20(1).jpg?la=en";
+            return "https://images.pexels.com/photos/40756/lion-safari-afika-landscape-40756.jpeg?fit=crop&crop=entropy&w=640&h=428";
         }
     }
 }
