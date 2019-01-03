@@ -221,17 +221,21 @@ class InteractiveMap {
                             MarkerElement.style.position = 'absolute';
                             MarkerElement.className = 'iamap-marker';
 
-                            /*
-                            Temporary
-                            */
-                            MarkerElement.style.width = "7px";
-                            MarkerElement.style.height = MarkerElement.style.width;
-                            MarkerElement.style.borderRadius = "calc(" + MarkerElement.style.width + " / 2)";
-                            MarkerElement.style.backgroundColor = "red";
+                            MarkerElement.style.width = "24px";
+                            MarkerElement.style.height = "45px";
+
+                            MarkerElement.style.backgroundPosition = "center center";
+                            MarkerElement.style.backgroundImage = "url('/Assets/images/MapAsset_Marker-Default.png')";
+                            MarkerElement.style.backgroundSize = "contain";
 
                         this.Markers[g].items[m].Element = MarkerElement;
                         this.Elements.Markers.appendChild(this.Markers[g].items[m].Element);
                     }
+
+                    Marker.Element.addEventListener('click', function(e){
+                        e.preventDefault();
+                        Marker.RenderPopup();
+                    });
 
                     this.Markers[g].items[m].Element.style.visibility = Marker.render ? "unset" : "hidden";
 
@@ -1036,6 +1040,7 @@ class InteractiveMapMarker {
             this.label = cfg.label;
             this.desc = cfg.desc ? cfg.desc : "";
             this.render = true;
+            this.ispopupshown = false;
         }
     }
     cfgError(field){
@@ -1043,5 +1048,26 @@ class InteractiveMapMarker {
     }
     getPosition(){
         return this.position;
+    }
+    RenderPopup() {
+        let self = this;
+
+        if(this.ispopupshown === false) {
+            this.ispopupshown = true;
+            let PopupProp = Array(
+                {
+                    tag: "h2",
+                    text: this.label
+                },
+                {
+                    tag: "p",
+                    text: this.desc
+                }
+            );
+
+            return new Popup(PopupProp, true);
+        } else {
+            return false;
+        }
     }
 }

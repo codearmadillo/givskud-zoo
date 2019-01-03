@@ -2,6 +2,7 @@ class Popup {
     constructor(d, cls = true) {
         this.dom = this.todom(d);
         this.cls = cls;
+        
         return this.render();
     }
     todom(data) {

@@ -1,8 +1,5 @@
 var Configuration = {
-
-    // Map and location services
+    Page: "Default",
     IsLocationServiceEnabled: true,
-    LocationDummyOverride: true,
-
-    // 
+    LocationDummyOverride: true
 }

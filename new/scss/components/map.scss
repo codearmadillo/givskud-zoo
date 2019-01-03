@@ -27,6 +27,7 @@
         z-index: 200;
     }
     &-filters__controls {
+        display: none;
         position: absolute;
         width: 100%;
         top: 0; bottom: 0;
