@@ -50,6 +50,7 @@ namespace Types {
         public string Time { get; set; }
         public string Date { get; set; }
         public bool IsToday { get; set; }
+        public bool IsUpcoming { get; set; }
 
         public bool HasAttraction() {
             return this.MapPoint == null;

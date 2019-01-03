@@ -44,7 +44,8 @@ namespace EventsController {
                             Price = ContentHelpers.ContentHelpers.ConvertToCurrency(Convert.ToInt32(Node.GetPropertyValue("Price").ToString())),
                             Time = EventDateTime.ToString("HH:mm"),
                             Date = EventDateTime.ToString("dd/MM/yyyy"),
-                            IsToday = Now.ToString("dd/MM/yyyy") == EventDateTime.ToString("dd/MM/yyyy")
+                            IsToday = Now.ToString("dd/MM/yyyy") == EventDateTime.ToString("dd/MM/yyyy"),
+                            IsUpcoming = Now.Date < EventDateTime.Date
                         });
                     }
                 }
