@@ -345,6 +345,7 @@
     <Content Include="Views\Partials\Misc\NoContent.cshtml" />
     <Content Include="Views\Partials\Misc\Quiz.cshtml" />
     <Content Include="Views\SingleContent.cshtml" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
